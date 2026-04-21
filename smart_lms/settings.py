@@ -2,10 +2,11 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+IS_VERCEL = bool(os.getenv('VERCEL'))
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-key-for-production')
 
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'False'
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -71,10 +72,7 @@ WSGI_APPLICATION = 'smart_lms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # SQLite is fine for development, but file locks can happen with
-        # concurrent writes (admin forms, auto-reloader, multiple tabs).
-        # A timeout allows Django to wait briefly instead of failing fast.
+        'NAME': Path('/tmp/db.sqlite3') if IS_VERCEL else BASE_DIR / 'db.sqlite3',
         'OPTIONS': {
             'timeout': 30,
         },
@@ -115,7 +113,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 GOOGLE_CLOUD_VISION_API_KEY = os.getenv('GOOGLE_CLOUD_VISION_API_KEY', '')
 HF_TOKEN = os.getenv('HF_TOKEN', '')
-HUGGINGFACE_HUB_TOKEN = os.getenv('HUGGINGFACE_HUB_TOKEN', HF_TOKEN)
+HUGGINGFACE_HUB_TOKEN = os.getenv('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', HF_TOKEN)
 HUGGINGFACE_EMOTION_MODEL = os.getenv('HUGGINGFACE_EMOTION_MODEL', 'dima806/facial_emotions_image_detection')
 
 CSRF_COOKIE_HTTPONLY = False
