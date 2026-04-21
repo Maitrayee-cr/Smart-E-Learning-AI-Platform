@@ -3,11 +3,27 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-change-this-key-for-production'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-key-for-production')
 
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '.vercel.app',
+    'smart-e-learning-ai-platform.vercel.app',
+]
+extra_allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
+if extra_allowed_hosts:
+    ALLOWED_HOSTS.extend(host.strip() for host in extra_allowed_hosts.split(',') if host.strip())
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
+    'https://smart-e-learning-ai-platform.vercel.app',
+]
+extra_csrf_origins = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', '')
+if extra_csrf_origins:
+    CSRF_TRUSTED_ORIGINS.extend(origin.strip() for origin in extra_csrf_origins.split(',') if origin.strip())
 
 INSTALLED_APPS = [
     'django.contrib.admin',
