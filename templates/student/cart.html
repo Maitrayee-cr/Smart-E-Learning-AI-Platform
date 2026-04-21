@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}My Cart | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='My Cart' subtitle='Review selected courses and complete payment' parent='Student' %}
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-3">Cart Items</h5>
+                        {% for item in cart_items %}
+                            <div class="border rounded-3 p-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start gap-3">
+                                    <div>
+                                        <h6 class="mb-1">{{ item.course.title }}</h6>
+                                        <p class="small text-muted mb-2">{{ item.course.short_description|truncatechars:95 }}</p>
+                                        <span class="badge text-bg-light border">{{ item.course.get_level_display }}</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fw-bold mb-2">
+                                            {% if item.course.price == 0 %}Free{% else %}&#8377;{{ item.course.price|floatformat:2 }}{% endif %}
+                                        </div>
+                                        <form method="post" action="{% url 'learning:remove_from_cart' item.id %}">
+                                            {% csrf_token %}
+                                            <button class="btn btn-sm btn-outline-danger">Remove</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">
+                                Your cart is empty. Add courses from catalog or wishlist.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="mb-3">Payment Summary</h6>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total</span>
+                            <strong>&#8377;{{ total_amount|floatformat:2 }}</strong>
+                        </div>
+
+                        {% if cart_items %}
+                            <form method="post" action="{% url 'learning:checkout_cart' %}">
+                                {% csrf_token %}
+                                {% if has_paid_items %}
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">{{ payment_form.payment_method.label }}</label>
+                                        {% if payment_form.payment_method.errors %}
+                                            <div class="text-danger small mb-2">{{ payment_form.payment_method.errors|striptags }}</div>
+                                        {% endif %}
+                                        <div class="d-grid gap-2">
+                                            {% for radio in payment_form.payment_method %}
+                                                <label class="border rounded-3 p-2 d-flex justify-content-between align-items-center">
+                                                    <span class="small">{{ radio.choice_label }}</span>
+                                                    <span>{{ radio.tag }}</span>
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div id="paymentDetailsBlock" class="mb-3">
+                                        {% include 'components/payment_details_fields.html' with payment_form=payment_form %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">{{ payment_form.mock_result.label }}</label>
+                                        {{ payment_form.mock_result }}
+                                        <small class="text-muted d-block mt-1">Demo-only control to simulate payment outcome.</small>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        {{ payment_form.agree_terms }}
+                                        <label class="form-check-label small" for="{{ payment_form.agree_terms.id_for_label }}">
+                                            {{ payment_form.agree_terms.label }}
+                                        </label>
+                                        {% if payment_form.agree_terms.errors %}
+                                            <div class="text-danger small mt-1">{{ payment_form.agree_terms.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <button class="btn btn-primary w-100">Pay & Enroll All</button>
+                                {% else %}
+                                    <button class="btn btn-primary w-100">Enroll All Free Courses</button>
+                                {% endif %}
+                            </form>
+                        {% endif %}
+                        <a href="{% url 'courses:course_list' %}" class="btn btn-outline-secondary w-100 mt-2">Browse More Courses</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const methodRadios = document.querySelectorAll('input[name="payment_method"]');
+        const detailGroups = document.querySelectorAll('.payment-detail-group');
+        if (!methodRadios.length) {
+            return;
+        }
+
+        function toggleGroups() {
+            const selected = document.querySelector('input[name="payment_method"]:checked');
+            const method = selected ? selected.value : '';
+            detailGroups.forEach((group) => {
+                group.style.display = group.dataset.paymentMethod === method ? 'block' : 'none';
+            });
+        }
+
+        methodRadios.forEach((radio) => radio.addEventListener('change', toggleGroups));
+        toggleGroups();
+    });
+</script>
+{% endblock %}

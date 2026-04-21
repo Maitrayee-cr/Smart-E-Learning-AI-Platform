@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='About Us' subtitle='Our mission and impact in digital learning' parent='Company' %}
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <h3>Modern Learning for Every Student</h3>
+                <p class="text-muted">Smart E-Learning Management System is an EdTech platform that combines structured courses, guided lessons, progress tracking, and digital certificates in one place.</p>
+                <p class="text-muted">The platform is designed for institutions, instructors, and learners who need a scalable and easy-to-use environment for outcome-focused education.</p>
+                <div class="row g-3 mt-1">
+                    <div class="col-sm-4"><div class="metric-card"><h3>100K+</h3><p>Learners</p></div></div>
+                    <div class="col-sm-4"><div class="metric-card"><h3>200+</h3><p>Courses</p></div></div>
+                    <div class="col-sm-4"><div class="metric-card"><h3>170+</h3><p>Instructors</p></div></div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="glass-card p-4">
+                    <img src="{% static 'images/hero-placeholder-user.jpeg' %}?v=20260331v4" alt="Smart learning illustration" class="img-fluid rounded-4 mb-3">
+                    <h5 class="mb-3">Our Highlights</h5>
+                    <ul class="mb-0 text-muted">
+                        <li>Role-based dashboards</li>
+                        <li>Lesson resources and progress monitoring</li>
+                        <li>Certificate-ready completion workflow</li>
+                        <li>Analytics for learning insights</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

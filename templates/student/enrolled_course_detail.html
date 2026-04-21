@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% block title %}{{ enrollment.course.title }} | Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title=enrollment.course.title subtitle='Enrolled course workspace' parent='My Learning' %}
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Course Progress</h5>
+                            <span id="progressPercentageText" class="fw-semibold">{{ enrollment.progress_percentage }}%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 12px;">
+                            <div id="progressBarFill" class="progress-bar" style="width: {{ enrollment.progress_percentage }}%"></div>
+                        </div>
+                        <div id="certificateCta" {% if not has_certificate %}class="d-none"{% endif %}>
+                            <a href="{% url 'learning:certificate_page' enrollment.id %}" class="btn btn-success"><i class="bi bi-patch-check"></i> View Certificate</a>
+                        </div>
+                    </div>
+                </div>
+
+                {% if enrollment.course.full_course_video %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Full Course Video</h5>
+                            <video
+                                class="w-100 rounded-3 border full-course-video"
+                                controls
+                                preload="auto"
+                                playsinline
+                                data-complete-url="{% url 'learning:mark_course_video_complete' enrollment.course.slug %}"
+                            >
+                                <source src="{{ enrollment.course.full_course_video.url }}">
+                                Your browser does not support the video tag.
+                            </video>
+                            <small id="fullVideoStatus" class="text-muted d-block mt-2">
+                                Progress updates automatically after watching full video.
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3">Course Quiz</h5>
+                        {% if course_quiz %}
+                            <p class="text-muted mb-2">
+                                {{ course_quiz.title }} ({{ course_quiz.questions.count }} questions)
+                            </p>
+                            {% if latest_quiz_result %}
+                                <p class="small mb-3">
+                                    Last score: <strong>{{ latest_quiz_result.score_percentage }}%</strong>
+                                    {% if latest_quiz_result.is_passed %}
+                                        <span class="badge text-bg-success ms-2">Passed</span>
+                                    {% else %}
+                                        <span class="badge text-bg-danger ms-2">Failed</span>
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+                            <a href="{% url 'learning:attempt_quiz' course_quiz.id %}" class="btn btn-outline-primary">
+                                {% if latest_quiz_result %}Retake Quiz{% else %}Start Quiz{% endif %}
+                            </a>
+                        {% else %}
+                            <div class="empty-state">Quiz will be available soon for this course.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4 ai-insight-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="ai-kicker">AI Learning Path</span>
+                                <h5 class="mb-0">Next Best Topics</h5>
+                            </div>
+                            <span class="ai-match-score">{{ performance_prediction.confidence }}%</span>
+                        </div>
+                        <p class="small text-muted mb-3">Performance band: <strong>{{ performance_prediction.label }}</strong>. {{ performance_prediction.explanation }}</p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="small text-uppercase text-muted">Next Lessons</h6>
+                                {% for lesson in optimized_learning_path.next_lessons %}
+                                    <div class="ai-action-tile mb-2">
+                                        <strong>{{ lesson.title }}</strong>
+                                        <p class="small mb-0">{{ lesson.section }} • {{ lesson.duration }} min • {{ lesson.summary }}</p>
+                                    </div>
+                                {% empty %}
+                                    <div class="empty-state">No remaining lessons. Retake the quiz or review notes.</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="small text-uppercase text-muted">Weak-topic Revision</h6>
+                                {% for weak in optimized_learning_path.weak_lessons %}
+                                    <div class="ai-action-tile mb-2">
+                                        <strong>{{ weak.title }}</strong>
+                                        <p class="small mb-0">{% if weak.score %}Last quiz score {{ weak.score }}%. {% endif %}{{ weak.action }}</p>
+                                    </div>
+                                {% empty %}
+                                    <div class="empty-state">No weak-topic alerts yet.</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for topic in optimized_learning_path.key_topics %}
+                                <span class="ai-tag">{{ topic }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="ai-kicker">AI Video Summarizer</span>
+                                <h5 class="mb-0">Lecture Highlights</h5>
+                            </div>
+                            <span class="badge text-bg-light border">Simulated NLP</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="small text-uppercase text-muted">Summary Points</h6>
+                                <ul class="small text-muted mb-0">
+                                    {% for point in video_summary.summary_points %}
+                                        <li>{{ point }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="small text-uppercase text-muted">Key Topics</h6>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    {% for topic in video_summary.key_topics %}
+                                        <span class="ai-tag">{{ topic }}</span>
+                                    {% endfor %}
+                                </div>
+                                <h6 class="small text-uppercase text-muted">Lesson Highlights</h6>
+                                {% for item in video_summary.lesson_highlights %}
+                                    <div class="small mb-2"><strong>{{ item.title }}</strong> - {{ item.summary }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-3">Course Review</h5>
+                        <form method="post" action="{% url 'learning:submit_review' enrollment.course.slug %}">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-3"><label class="form-label">Rating</label>{{ review_form.rating }}</div>
+                                <div class="col-md-9"><label class="form-label">Comment</label>{{ review_form.comment }}</div>
+                                <div class="col-12"><button class="btn btn-primary">{% if existing_review %}Update Review{% else %}Submit Review{% endif %}</button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h6>Course Details</h6>
+                        <p class="small mb-1"><strong>Instructor:</strong> {{ enrollment.course.instructor.get_full_name|default:enrollment.course.instructor.username }}</p>
+                        <p class="small mb-1"><strong>Level:</strong> {{ enrollment.course.get_level_display }}</p>
+                        <p class="small mb-1"><strong>Language:</strong> {{ enrollment.course.language }}</p>
+                        <p class="small mb-0"><strong>Enrolled On:</strong> {{ enrollment.enrolled_at|date:'d M Y' }}</p>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Emotion Detection</h6>
+                            <span class="badge text-bg-light border">Hugging Face Ready</span>
+                        </div>
+                        <p class="small text-muted mb-3">
+                            Use live camera or upload a face snapshot to analyze your engagement.
+                        </p>
+                        <form
+                            id="engagementSnapshotForm"
+                            method="post"
+                            enctype="multipart/form-data"
+                            action="{% url 'learning:engagement_analysis' enrollment.course.slug %}"
+                        >
+                            {% csrf_token %}
+                            <div class="live-emotion-box mb-3">
+                                <video id="emotionCameraPreview" class="live-emotion-video" autoplay muted playsinline hidden></video>
+                                <canvas id="emotionCameraCanvas" class="d-none"></canvas>
+                                <div id="emotionCameraPlaceholder" class="live-emotion-placeholder">
+                                    <i class="bi bi-camera-video"></i>
+                                    <span>Start camera for live emotion detection</span>
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="button" id="startEmotionCamera" class="btn btn-outline-primary btn-sm">Start Live Camera</button>
+                                <button type="button" id="captureEmotionSnapshot" class="btn btn-outline-secondary btn-sm" disabled>Capture Snapshot</button>
+                            </div>
+                            <small id="emotionCameraStatus" class="text-muted d-block mb-2">Or upload an existing face snapshot below.</small>
+                            <div class="mb-3">{{ engagement_form.image }}</div>
+                            <button class="btn btn-primary btn-sm w-100">Analyze Snapshot</button>
+                        </form>
+                        <hr>
+                        {% for snapshot in recent_snapshots %}
+                            <div class="border rounded-3 p-3 mb-2">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <strong>{{ snapshot.get_detected_emotion_display }}</strong>
+                                    <span class="small">{{ snapshot.engagement_score }}%</span>
+                                </div>
+                                <p class="small text-muted mb-1">{{ snapshot.analysis }}</p>
+                                <div class="d-flex justify-content-between align-items-center gap-2">
+                                    <small class="text-muted">{{ snapshot.created_at|date:'d M Y H:i' }}</small>
+                                    <form method="post" action="{% url 'learning:delete_engagement_snapshot' snapshot.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">Upload a face snapshot to simulate attention analytics.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Plagiarism Detection</h6>
+                            <span class="badge text-bg-light border">Similarity Report</span>
+                        </div>
+                        <form method="post" action="{% url 'learning:plagiarism_check' enrollment.course.slug %}">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <label class="form-label">Title</label>
+                                {{ plagiarism_form.title }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Answer / Assignment</label>
+                                {{ plagiarism_form.content }}
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm w-100">Run Plagiarism Check</button>
+                        </form>
+                        <hr>
+                        {% for submission in recent_submissions %}
+                            <div class="border rounded-3 p-3 mb-2">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <strong>{{ submission.title }}</strong>
+                                    <span class="small">{{ submission.plagiarism_score }}%</span>
+                                </div>
+                                <p class="small text-muted mb-1">{{ submission.similarity_report }}</p>
+                                {% if submission.matched_submission %}
+                                    <small class="text-muted">Matched with {{ submission.matched_submission.student.username }}</small>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">Your plagiarism reports will appear here.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+    function getCookie(name) {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith(name + '='));
+        return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const cameraVideo = document.getElementById('emotionCameraPreview');
+        const cameraCanvas = document.getElementById('emotionCameraCanvas');
+        const cameraPlaceholder = document.getElementById('emotionCameraPlaceholder');
+        const cameraStatus = document.getElementById('emotionCameraStatus');
+        const startCameraButton = document.getElementById('startEmotionCamera');
+        const captureButton = document.getElementById('captureEmotionSnapshot');
+        const engagementForm = document.getElementById('engagementSnapshotForm');
+        const engagementInput = engagementForm?.querySelector('input[type="file"][name="image"]');
+        let cameraStream = null;
+
+        const setCameraStatus = (message, type = 'muted') => {
+            if (!cameraStatus) return;
+            cameraStatus.className = `text-${type} d-block mb-2`;
+            cameraStatus.textContent = message;
+        };
+
+        const stopCamera = () => {
+            if (!cameraStream) return;
+            cameraStream.getTracks().forEach((track) => track.stop());
+            cameraStream = null;
+        };
+
+        if (startCameraButton && captureButton && cameraVideo && cameraCanvas && engagementInput) {
+            startCameraButton.addEventListener('click', async () => {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    setCameraStatus('Live camera is not supported in this browser. Please upload a snapshot instead.', 'danger');
+                    return;
+                }
+
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                    cameraVideo.srcObject = cameraStream;
+                    cameraVideo.hidden = false;
+                    if (cameraPlaceholder) cameraPlaceholder.hidden = true;
+                    captureButton.disabled = false;
+                    startCameraButton.textContent = 'Camera Running';
+                    setCameraStatus('Camera is live. Capture a snapshot, then click Analyze Snapshot.', 'success');
+                } catch (error) {
+                    setCameraStatus('Camera permission was blocked. Please allow camera access or upload a snapshot.', 'danger');
+                }
+            });
+
+            captureButton.addEventListener('click', () => {
+                if (!cameraStream || cameraVideo.readyState < 2) {
+                    setCameraStatus('Camera is not ready yet. Please wait a moment and try again.', 'warning');
+                    return;
+                }
+
+                cameraCanvas.width = cameraVideo.videoWidth || 640;
+                cameraCanvas.height = cameraVideo.videoHeight || 480;
+                const context = cameraCanvas.getContext('2d');
+                context.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+                cameraCanvas.toBlob((blob) => {
+                    if (!blob) {
+                        setCameraStatus('Could not capture the snapshot. Please try again.', 'danger');
+                        return;
+                    }
+
+                    const file = new File([blob], `live-emotion-snapshot-${Date.now()}.jpg`, { type: 'image/jpeg' });
+                    const transfer = new DataTransfer();
+                    transfer.items.add(file);
+                    engagementInput.files = transfer.files;
+                    setCameraStatus('Snapshot captured. Click Analyze Snapshot to run emotion detection.', 'success');
+                    stopCamera();
+                    startCameraButton.textContent = 'Restart Live Camera';
+                    captureButton.disabled = true;
+                }, 'image/jpeg', 0.92);
+            });
+
+            window.addEventListener('beforeunload', stopCamera);
+        }
+
+        const video = document.querySelector('.full-course-video');
+        if (!video) return;
+
+        const csrfToken = getCookie('csrftoken');
+        const progressText = document.getElementById('progressPercentageText');
+        const progressBar = document.getElementById('progressBarFill');
+        const certificateCta = document.getElementById('certificateCta');
+        const statusLine = document.getElementById('fullVideoStatus');
+
+        video.addEventListener('ended', async () => {
+            try {
+                const response = await fetch(video.dataset.completeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                if (!response.ok) throw new Error('Unable to update progress.');
+                const data = await response.json();
+
+                if (typeof data.progress_percentage === 'number') {
+                    const progress = data.progress_percentage.toFixed(2);
+                    if (progressText) progressText.textContent = `${progress}%`;
+                    if (progressBar) progressBar.style.width = `${progress}%`;
+                }
+
+                if (data.certificate_no) {
+                    if (certificateCta) certificateCta.classList.remove('d-none');
+                    if (statusLine) {
+                        statusLine.classList.remove('text-muted', 'text-danger');
+                        statusLine.classList.add('text-success');
+                        statusLine.textContent = `Video completed. Certificate available: ${data.certificate_no}`;
+                    }
+                } else if (statusLine) {
+                    statusLine.classList.remove('text-danger');
+                    statusLine.classList.add('text-muted');
+                    statusLine.textContent = 'Video completed. Pass the course quiz to unlock certificate.';
+                }
+            } catch (error) {
+                if (statusLine) {
+                    statusLine.classList.remove('text-muted', 'text-success');
+                    statusLine.classList.add('text-danger');
+                    statusLine.textContent = 'Could not sync progress. Please refresh and try again.';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

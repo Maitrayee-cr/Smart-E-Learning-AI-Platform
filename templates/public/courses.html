@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Courses | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='All Courses' subtitle='Search, filter, and start learning today' parent='Learning' %}
+<section class="py-4">
+    <div class="container">
+        <form method="get" class="card border-0 shadow-sm p-3 mb-4 filter-shell premium-filter-shell">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3"><label class="form-label">Search</label>{{ form.q }}</div>
+                <div class="col-md-2"><label class="form-label">Category</label>{{ form.category }}</div>
+                <div class="col-md-2"><label class="form-label">Level</label>{{ form.level }}</div>
+                <div class="col-md-2"><label class="form-label">Pricing</label>{{ form.pricing }}</div>
+                <div class="col-md-2"><label class="form-label">Sort</label>{{ form.sort }}</div>
+                <div class="col-md-1"><button class="btn btn-primary w-100">Go</button></div>
+            </div>
+        </form>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="small text-muted mb-0">Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ page_obj.paginator.count }} courses</p>
+            <span class="badge text-bg-light border">{{ page_obj.paginator.count }} Available</span>
+        </div>
+
+        <div class="row g-4">
+            {% for course in page_obj %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm course-card premium-course-card modern-course-card">
+                        {% if course.thumbnail %}
+                            <img src="{{ course.thumbnail.url }}" class="card-img-top" alt="{{ course.title }}">
+                        {% else %}
+                            <div class="placeholder-img position-relative d-flex align-items-end justify-content-start p-3">
+                                <img src="{% static 'images/course-cover.svg' %}?v=20260331img2" alt="{{ course.title }}" class="placeholder-art">
+                                <span class="placeholder-label">{{ course.category.name }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge text-bg-light">{{ course.get_level_display }}</span>
+                                <span class="text-warning"><i class="bi bi-star-fill"></i> {{ course.average_rating }}</span>
+                            </div>
+                            <h6 class="course-title">{{ course.title }}</h6>
+                            <p class="small text-muted">{{ course.short_description|truncatechars:100 }}</p>
+                            <p class="small mb-2 course-instructor"><i class="bi bi-person-circle me-1"></i> {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">{% if course.price == 0 %}Free{% else %}&#8377;{{ course.price|floatformat:2 }}{% endif %}</span>
+                                <div class="d-flex gap-2">
+                                    {% if request.user.is_authenticated and request.user.role == 'student' %}
+                                        <a href="{% url 'learning:add_to_cart' course.slug %}?next={% url 'courses:course_list' %}" class="btn btn-sm btn-outline-primary">Add to Cart</a>
+                                    {% endif %}
+                                    <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-sm btn-primary">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12"><div class="empty-state">No courses match your filter.</div></div>
+            {% endfor %}
+        </div>
+
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    </div>
+</section>
+{% endblock %}

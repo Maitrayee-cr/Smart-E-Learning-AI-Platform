@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} | Instructor{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title=title subtitle='Provide complete and accurate course details' parent='Instructor' %}
+<section class="py-4">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label">Category</label>{{ form.category }}</div>
+                        <div class="col-md-6"><label class="form-label">Title</label>{{ form.title }}</div>
+                        <div class="col-12"><label class="form-label">Short Description</label>{{ form.short_description }}</div>
+                        <div class="col-12"><label class="form-label">Description</label>{{ form.description }}</div>
+                        <div class="col-md-6">
+                            <label class="form-label">Course Photo</label>
+                            {{ form.thumbnail }}
+                            <small class="text-muted d-block mt-1">Accepted: JPG, PNG, WEBP (max 3 MB).</small>
+                            {% if course and course.thumbnail %}
+                                <div class="mt-2">
+                                    <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="img-thumbnail" style="max-width: 220px; height: auto;">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Course Background Photo</label>
+                            {{ form.background_image }}
+                            <small class="text-muted d-block mt-1">Used as the course header banner. Accepted: JPG, PNG, WEBP (max 5 MB).</small>
+                            {% if course and course.background_image %}
+                                <div class="mt-2">
+                                    <img src="{{ course.background_image.url }}" alt="{{ course.title }} background" class="img-thumbnail" style="max-width: 220px; height: auto;">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Full Course Video</label>
+                            {{ form.full_course_video }}
+                            <small class="text-muted d-block mt-1">Accepted: MP4, WEBM, MOV, AVI, MPEG (max 200 MB).</small>
+                            {% if course and course.full_course_video %}
+                                <div class="mt-2">
+                                    <video controls style="max-width: 220px; width: 100%; border-radius: 10px;">
+                                        <source src="{{ course.full_course_video.url }}">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3"><label class="form-label">Level</label>{{ form.level }}</div>
+                        <div class="col-md-3"><label class="form-label">Duration (hours)</label>{{ form.duration_hours }}</div>
+                        <div class="col-md-4"><label class="form-label">Language</label>{{ form.language }}</div>
+                        <div class="col-md-4"><label class="form-label">Price</label>{{ form.price }}</div>
+                        <div class="col-md-2"><label class="form-label">Featured</label><div>{{ form.is_featured }}</div></div>
+                        <div class="col-md-2"><label class="form-label">Published</label><div>{{ form.is_published }}</div></div>
+                        <div class="col-12"><button class="btn btn-primary">Save Course</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

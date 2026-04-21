@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}FAQ | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Frequently Asked Questions' subtitle='Common queries from students and instructors' parent='Help' %}
+<section class="py-5">
+    <div class="container">
+        <div class="accordion" id="faqAccordion">
+            {% for faq in faqs %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ faq.id }}">
+                            {{ faq.question }}
+                        </button>
+                    </h2>
+                    <div id="faq{{ faq.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">{{ faq.answer }}</div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">No FAQs available right now.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

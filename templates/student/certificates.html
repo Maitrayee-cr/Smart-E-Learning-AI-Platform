@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}My Certificates | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='My Certificates' subtitle='All certificates earned from completed courses' parent='Student' %}
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4">
+            {% for cert in certificates %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h6>{{ cert.enrollment.course.title }}</h6>
+                            <p class="small text-muted mb-2">Certificate No: {{ cert.certificate_no }}</p>
+                            <p class="small text-muted">Issued: {{ cert.issued_at|date:'d M Y' }}</p>
+                            <a href="{% url 'learning:certificate_page' cert.enrollment.id %}" class="btn btn-sm btn-primary">View Certificate</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12"><div class="empty-state">Complete a course to unlock certificates.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

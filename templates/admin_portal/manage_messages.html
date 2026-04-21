@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Manage Messages | Admin{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Manage Messages' subtitle='Track and resolve support/contact requests' parent='Admin' %}
+<section class="py-4">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light"><tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody>
+                        {% for msg in page_obj %}
+                            <tr>
+                                <td>{{ msg.name }}</td>
+                                <td>{{ msg.email }}</td>
+                                <td>{{ msg.subject }}</td>
+                                <td>{{ msg.message|truncatechars:90 }}</td>
+                                <td>{% if msg.is_resolved %}<span class="badge text-bg-success">Resolved</span>{% else %}<span class="badge text-bg-secondary">Open</span>{% endif %}</td>
+                                <td>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="message_id" value="{{ msg.id }}">
+                                        <button class="btn btn-sm btn-outline-primary">Toggle</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="6" class="text-center py-4">No messages found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    </div>
+</section>
+{% endblock %}

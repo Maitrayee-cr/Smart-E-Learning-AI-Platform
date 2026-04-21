@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Manage Lessons | Instructor{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Manage Lessons' subtitle='Create modules, lessons, and resources' parent=course.title %}
+<section class="py-4">
+    <div class="container">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="mb-3">Add Module</h5>
+                <form method="post" action="{% url 'courses:section_create' course.slug %}">
+                    {% csrf_token %}
+                    <div class="row g-2">
+                        <div class="col-md-5">{{ section_form.title }}</div>
+                        <div class="col-md-4">{{ section_form.description }}</div>
+                        <div class="col-md-2">{{ section_form.order }}</div>
+                        <div class="col-md-1"><button class="btn btn-primary w-100">Add</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% for section in sections %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Module {{ section.order }}: {{ section.title }}</h5>
+                        <form method="post" action="{% url 'courses:section_delete' course.slug section.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-outline-danger">Delete Module</button>
+                        </form>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" action="{% url 'courses:lesson_create' course.slug section.id %}" class="border rounded-3 p-3 mb-3">
+                        {% csrf_token %}
+                        <h6>Add Lesson</h6>
+                        <div class="row g-2">
+                            <div class="col-md-4">{{ lesson_form.title }}</div>
+                            <div class="col-md-3">{{ lesson_form.video_file }}</div>
+                            <div class="col-md-2">{{ lesson_form.duration_minutes }}</div>
+                            <div class="col-md-1">{{ lesson_form.order }}</div>
+                            <div class="col-md-2"><button class="btn btn-primary w-100">Add Lesson</button></div>
+                            <div class="col-12">{{ lesson_form.description }}</div>
+                            <div class="col-12">{{ lesson_form.notes }}</div>
+                        </div>
+                    </form>
+
+                    {% for lesson in section.lessons.all %}
+                        <div class="lesson-box mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <h6 class="mb-0">{{ lesson.order }}. {{ lesson.title }}</h6>
+                                    <small class="text-muted">{{ lesson.duration_minutes }} min</small>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'courses:quiz_manage' course.slug section.id lesson.id %}" class="btn btn-sm btn-outline-primary">AI Quiz</a>
+                                    <form method="post" action="{% url 'courses:lesson_delete' course.slug section.id lesson.id %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                                </div>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" action="{% url 'courses:resource_add' course.slug section.id lesson.id %}" class="row g-2">
+                                {% csrf_token %}
+                                <div class="col-md-4">{{ resource_form.title }}</div>
+                                <div class="col-md-2">{{ resource_form.resource_type }}</div>
+                                <div class="col-md-3">{{ resource_form.file }}</div>
+                                <div class="col-md-2">{{ resource_form.external_url }}</div>
+                                <div class="col-md-1"><button class="btn btn-sm btn-outline-primary w-100">+</button></div>
+                            </form>
+                            <div class="mt-2">
+                                {% for resource in lesson.resources.all %}
+                                    <span class="badge text-bg-light border me-1">{{ resource.title }}</span>
+                                {% empty %}
+                                    <small class="text-muted">No resources added.</small>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">No lessons in this module.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">Start by adding your first module.</div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

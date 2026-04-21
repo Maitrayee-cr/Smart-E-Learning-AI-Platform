@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Contact Us' subtitle='We are here to help you with your learning journey' parent='Support' %}
+<section class="py-5 contact-page-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="glass-card p-4 h-100 contact-info-panel">
+                    <img src="{% static 'images/hero-placeholder-user.jpeg' %}?v=20260331v4" alt="Support team" class="img-fluid rounded-4 mb-3">
+                    <h5 class="mb-3">Get in Touch</h5>
+                    <p class="text-muted">Need support or have questions about courses, enrollment, or instructor onboarding? Send us a message.</p>
+                    <div class="contact-info-list">
+                        <p class="mb-2"><i class="bi bi-envelope text-primary me-2"></i>maitrayee.purohit01@gmail.com</p>
+                        <p class="mb-2"><i class="bi bi-telephone text-primary me-2"></i>+91 8488817303</p>
+                        <p class="mb-0"><i class="bi bi-geo-alt text-primary me-2"></i>Ahmedabad, Gujarat, India</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm contact-form-card">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">Send Message</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="form-label">Name</label>{{ form.name }}</div>
+                                <div class="col-md-6"><label class="form-label">Email</label>{{ form.email }}</div>
+                                <div class="col-md-6"><label class="form-label">Phone</label>{{ form.phone }}</div>
+                                <div class="col-md-6"><label class="form-label">Subject</label>{{ form.subject }}</div>
+                                <div class="col-12"><label class="form-label">Message</label>{{ form.message }}</div>
+                                <div class="col-12"><button class="btn btn-primary">Submit</button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

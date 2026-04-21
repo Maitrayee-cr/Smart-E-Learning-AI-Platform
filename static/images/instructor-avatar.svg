@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="instRing" x1="6" y1="4" x2="154" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="instCard" x1="28" y1="22" x2="132" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EEF4FF"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="80" cy="80" r="76" fill="url(#instRing)" fill-opacity="0.15"/>
+  <circle cx="80" cy="80" r="68" fill="url(#instCard)" stroke="#D3DEFF" stroke-width="2"/>
+
+  <ellipse cx="80" cy="76" rx="24" ry="26" fill="#FFD2C5"/>
+  <path d="M56 74C56 57 66 44 80 44C94 44 104 57 104 74V84H56V74Z" fill="#2B3B8E"/>
+  <circle cx="72" cy="74" r="8" fill="#FFFFFF" fill-opacity="0.15"/>
+  <circle cx="88" cy="74" r="8" fill="#FFFFFF" fill-opacity="0.15"/>
+  <rect x="64" y="100" width="32" height="10" rx="5" fill="#FFD2C5"/>
+  <path d="M42 136C46 115 61 102 80 102C99 102 114 115 118 136" fill="url(#instRing)" fill-opacity="0.9"/>
+  <rect x="58" y="117" width="44" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.34"/>
+</svg>

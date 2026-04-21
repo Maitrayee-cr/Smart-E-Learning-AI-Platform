@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home | Smart E-Learning{% endblock %}
+{% block content %}
+<section class="hero-section home-hero py-5">
+    <div class="container py-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="badge bg-primary-subtle text-primary mb-3 hero-badge">AI-Powered Learning Platform</span>
+                <h1 class="display-5 fw-bold mb-3">
+                    Build skills with
+                    <span class="text-gradient d-block">AI-guided Smart E-Learning</span>
+                </h1>
+                <p class="lead text-muted mb-4">Master industry-relevant skills with personalized recommendations, smart progress insights, adaptive next-step guidance, and certificate-ready courses.</p>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <a href="{% url 'courses:course_list' %}" class="btn btn-primary btn-lg">Explore Courses</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg"><i class="bi bi-play-circle me-1"></i>Start Learning</a>
+                </div>
+                <form class="hero-search p-3 rounded-4 shadow-sm bg-white" method="get" action="{% url 'courses:course_list' %}">
+                    <div class="input-group input-group-lg">
+                        <input type="text" name="q" class="form-control" placeholder="Search courses, skills, instructors...">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-visual-wrap mb-3 hero-art-board">
+                    <img src="{% static 'images/hero-placeholder-user.jpeg' %}?v=20260331v4" alt="E-learning dashboard preview" class="img-fluid hero-illustration">
+                    <div class="hero-floating-chip chip-1">
+                        <i class="bi bi-cpu-fill me-1"></i> AI Recommendations Live
+                    </div>
+                    <div class="hero-floating-chip chip-2">
+                        <i class="bi bi-graph-up-arrow me-1"></i> Smart Progress Insights
+                    </div>
+                </div>
+                <div class="glass-card p-4 hero-metrics">
+                    <h5 class="mb-3">AI Learning Snapshot</h5>
+                    <div class="row g-3">
+                        <div class="col-6"><div class="metric-card"><h3>{{ stats.students }}</h3><p>Students</p></div></div>
+                        <div class="col-6"><div class="metric-card"><h3>{{ stats.instructors }}</h3><p>Instructors</p></div></div>
+                        <div class="col-6"><div class="metric-card"><h3>{{ stats.courses }}</h3><p>Courses</p></div></div>
+                        <div class="col-6"><div class="metric-card"><h3>{{ stats.enrollments }}</h3><p>Enrollments</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="home-stats-bar mt-5">
+            <div class="row g-3 text-center">
+                <div class="col-6 col-md-3"><div class="metric-tile"><h3>{{ stats.students }}+</h3><p>Students</p></div></div>
+                <div class="col-6 col-md-3"><div class="metric-tile"><h3>{{ stats.courses }}+</h3><p>Courses</p></div></div>
+                <div class="col-6 col-md-3"><div class="metric-tile"><h3>{{ stats.instructors }}+</h3><p>Instructors</p></div></div>
+                <div class="col-6 col-md-3"><div class="metric-tile"><h3>{{ stats.enrollments }}+</h3><p>Classes</p></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container home-panel ai-feature-panel">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4 section-head">
+            <div>
+                <p class="section-kicker mb-1">AI Layer</p>
+                <h2 class="h3 mb-0">What Makes This Platform an AI Project</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-diagram-3"></i></span>
+                    <h5>Recommendation Engine</h5>
+                    <p class="text-muted mb-0">The platform analyzes learner activity, categories, quiz scores, and difficulty preference to rank the next best courses.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-bar-chart-line"></i></span>
+                    <h5>Smart Progress Insights</h5>
+                    <p class="text-muted mb-0">Student dashboards surface AI-generated study priorities, milestone alerts, and learning profile tags from real LMS activity.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-bullseye"></i></span>
+                    <h5>Course Match Scoring</h5>
+                    <p class="text-muted mb-0">Every course can be evaluated against a learner profile to show explainable AI match scores and next-step reasoning.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-chat-dots"></i></span>
+                    <h5>AI Chatbot Assistant</h5>
+                    <p class="text-muted mb-0">A floating chatbot answers learner questions about courses, certificates, quizzes, pricing, FAQs, and student progress.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container home-panel ai-feature-panel">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4 section-head">
+            <div>
+                <p class="section-kicker mb-1">Premium AI Modules</p>
+                <h2 class="h3 mb-0">Advanced AI Features Included</h2>
+            </div>
+            {% if request.user.is_authenticated and request.user.role == 'student' %}
+                <a href="{% url 'learning:my_learning' %}" class="btn btn-sm btn-outline-primary">Open AI Tools</a>
+            {% endif %}
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-camera-video"></i></span>
+                    <h5>AI Video Summarizer</h5>
+                    <p class="text-muted mb-0">Generates short lecture summaries, lesson highlights, and key topics from course lesson notes and video metadata.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-emoji-smile"></i></span>
+                    <h5>Emotion Detection</h5>
+                    <p class="text-muted mb-0">Students can upload snapshots for simulated attentive, confused, bored, or happy engagement classification.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-mic"></i></span>
+                    <h5>Voice Assistant</h5>
+                    <p class="text-muted mb-0">The chatbot supports browser speech-to-text and optional spoken replies for voice-based learning help.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-graph-up"></i></span>
+                    <h5>AI Analytics</h5>
+                    <p class="text-muted mb-0">Instructor and admin dashboards show top learners, weak learners, course popularity, quiz success, and engagement trends.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg">
+                <div class="ai-feature-card">
+                    <span class="ai-feature-icon"><i class="bi bi-shield-check"></i></span>
+                    <h5>Plagiarism Detection</h5>
+                    <p class="text-muted mb-0">Student submissions are compared for similarity, copied content percentage, and matched-submission reports.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if personalized_recommendations %}
+    <section class="py-5">
+        <div class="container home-panel home-featured-panel">
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4 section-head">
+                <div>
+                    <p class="section-kicker mb-1">For You</p>
+                    <h2 class="h3 mb-0">AI Recommended Courses</h2>
+                </div>
+                <a href="{% url 'learning:student_dashboard' %}" class="btn btn-sm btn-outline-primary">Open Dashboard</a>
+            </div>
+            <div class="row g-4">
+                {% for recommendation in personalized_recommendations %}
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm course-card startup-course-card">
+                            {% if recommendation.course.thumbnail %}
+                                <img src="{{ recommendation.course.thumbnail.url }}" class="card-img-top" alt="{{ recommendation.course.title }}">
+                            {% else %}
+                                <div class="placeholder-img position-relative d-flex align-items-end justify-content-start p-3">
+                                    <img src="{% static 'images/course-cover.svg' %}?v=20260331img2" alt="{{ recommendation.course.title }}" class="placeholder-art">
+                                    <span class="placeholder-label">{{ recommendation.course.category.name }}</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge text-bg-light">{{ recommendation.course.get_level_display }}</span>
+                                    <span class="ai-match-score">{{ recommendation.score }}%</span>
+                                </div>
+                                <h6 class="fw-bold">{{ recommendation.course.title }}</h6>
+                                <p class="small text-muted mb-2">{{ recommendation.headline }}</p>
+                                <p class="small mb-3">{{ recommendation.reasons|join:', ' }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold">{% if recommendation.course.price == 0 %}Free{% else %}&#8377;{{ recommendation.course.price|floatformat:2 }}{% endif %}</span>
+                                    <a href="{% url 'courses:course_detail' recommendation.course.slug %}" class="btn btn-sm btn-primary">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+<section class="py-5">
+    <div class="container home-panel home-featured-panel">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4 section-head">
+            <div>
+                <p class="section-kicker mb-1">Top Picks</p>
+                <h2 class="h3 mb-0">Featured Courses</h2>
+            </div>
+            <a href="{% url 'courses:course_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="row g-4">
+            {% for course in featured_courses %}
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm course-card startup-course-card">
+                        {% if course.thumbnail %}
+                            <img src="{{ course.thumbnail.url }}" class="card-img-top" alt="{{ course.title }}">
+                        {% else %}
+                            <div class="placeholder-img position-relative d-flex align-items-end justify-content-start p-3">
+                                <img src="{% static 'images/course-cover.svg' %}?v=20260331img2" alt="{{ course.title }}" class="placeholder-art">
+                                <span class="placeholder-label">{{ course.category.name }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <span class="badge text-bg-light mb-2">{{ course.get_level_display }}</span>
+                            <h6 class="fw-bold">{{ course.title }}</h6>
+                            <p class="small text-muted">By {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-warning"><i class="bi bi-star-fill"></i> {{ course.average_rating }}</span>
+                                <span class="fw-semibold">{% if course.price == 0 %}Free{% else %}&#8377;{{ course.price|floatformat:2 }}{% endif %}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-primary w-100">View Course</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12"><div class="empty-state">No featured courses available yet.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container home-panel home-categories-panel">
+        <h2 class="h3 mb-4">Top Categories</h2>
+        <div class="row g-3">
+            {% for cat in top_categories %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="category-pill">
+                        {% if cat.icon %}
+                            <span class="category-icon category-icon-font mb-2" aria-hidden="true">
+                                <i class="{{ cat.icon }}"></i>
+                            </span>
+                        {% else %}
+                            <img src="{% static 'images/category-icon.svg' %}?v=20260331img2" alt="{{ cat.name }}" class="category-icon mb-2">
+                        {% endif %}
+                        <h6 class="mb-1">{{ cat.name }}</h6>
+                        <small class="text-muted">{{ cat.course_count }} courses</small>
+                        <div class="mt-2">
+                            <a href="{% url 'courses:course_list' %}?category={{ cat.id }}" class="btn btn-link p-0 text-decoration-none">Browse Courses</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container home-panel home-instructor-panel">
+        <h2 class="h3 mb-4">Popular Instructors</h2>
+        <div class="row g-4">
+            {% for instructor in instructors %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <img src="{% static 'images/instructor-avatar.svg' %}?v=20260331img2" alt="{{ instructor.username }}" class="avatar-circle mb-3">
+                            <h5>{{ instructor.get_full_name|default:instructor.username }}</h5>
+                            <p class="text-muted mb-2">{{ instructor.instructor_profile.headline|default:'Expert Instructor' }}</p>
+                            <span class="badge text-bg-primary">{{ instructor.course_count }} courses</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container home-panel home-why-panel">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <h2 class="h3 mb-3">Why Choose Us</h2>
+                <ul class="list-group list-group-flush rounded-4 overflow-hidden shadow-sm">
+                    <li class="list-group-item"><i class="bi bi-check2-circle text-primary me-2"></i>Structured courses with practical lessons</li>
+                    <li class="list-group-item"><i class="bi bi-check2-circle text-primary me-2"></i>Progress tracking and smart analytics</li>
+                    <li class="list-group-item"><i class="bi bi-check2-circle text-primary me-2"></i>Downloadable resources and practical lesson flow</li>
+                    <li class="list-group-item"><i class="bi bi-check2-circle text-primary me-2"></i>Certificate generation after completion</li>
+                </ul>
+            </div>
+            <div class="col-lg-3">
+                <div class="photo-stack h-100">
+                    <div class="photo-card mb-3">
+                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1000&q=80" alt="Student learning online">
+                    </div>
+                    <div class="photo-card">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80" alt="Learners collaboration">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <h2 class="h3 mb-3">How It Works</h2>
+                <div class="timeline-card">
+                    <p><strong>1.</strong> Create a student or instructor account</p>
+                    <p><strong>2.</strong> Browse and enroll into your preferred course</p>
+                    <p><strong>3.</strong> Learn modules, complete lessons, and review resources</p>
+                    <p><strong>4.</strong> Track progress and unlock your certificate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container home-panel home-testimonials home-testimonials-panel">
+        <h2 class="h3 mb-4">Student Testimonials</h2>
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <img src="{% static 'images/testimonial-avatar.svg' %}?v=20260331img2" alt="{{ testimonial.name }}" class="testimonial-avatar">
+                                <div>
+                                    <h6 class="mb-0">{{ testimonial.name }}</h6>
+                                    <small class="text-muted">{{ testimonial.designation }}</small>
+                                </div>
+                            </div>
+                            <div class="text-warning mb-2">
+                                {% for _ in '12345'|make_list %}
+                                    {% if forloop.counter <= testimonial.rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="text-muted">"{{ testimonial.content }}"</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12"><div class="empty-state">Testimonials will be shown here.</div></div>
+            {% endfor %}
+        </div>
+        <div class="testimonial-dots mt-4 text-center">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter-section py-5">
+    <div class="container text-center">
+        <h2 class="h3 text-white">Ready to start your learning journey?</h2>
+        {% if request.user.is_authenticated %}
+            <p class="text-white-50">Welcome back. Continue your progress from your dashboard.</p>
+            {% if request.user.role == 'student' %}
+                <a href="{% url 'learning:student_dashboard' %}" class="btn btn-light btn-lg">Go to Student Dashboard</a>
+            {% elif request.user.role == 'instructor' %}
+                <a href="{% url 'courses:instructor_dashboard' %}" class="btn btn-light btn-lg">Go to Instructor Dashboard</a>
+            {% else %}
+                <a href="{% url 'core:admin_dashboard' %}" class="btn btn-light btn-lg">Go to Admin Dashboard</a>
+            {% endif %}
+        {% else %}
+            <p class="text-white-50">Join thousands of learners improving their skills with Smart E-Learning.</p>
+            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">Create Free Account</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

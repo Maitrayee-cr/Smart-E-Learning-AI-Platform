@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Result | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Quiz Result' subtitle='Detailed score report for your attempt' parent='Quiz' %}
+<section class="py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body p-5">
+                        <h4>{{ result.quiz.title }}</h4>
+                        <h2 class="display-5 fw-bold my-3">{{ result.score_percentage }}%</h2>
+                        <p class="text-muted">Correct: {{ result.correct_answers }} / {{ result.total_questions }}</p>
+                        {% if result.is_passed %}
+                            <span class="badge text-bg-success fs-6">Passed</span>
+                        {% else %}
+                            <span class="badge text-bg-danger fs-6">Failed</span>
+                        {% endif %}
+                        <div class="mt-4">
+                            <a href="{% url 'learning:enrolled_course_detail' result.quiz.lesson.section.course.slug %}" class="btn btn-primary">Back to Course</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

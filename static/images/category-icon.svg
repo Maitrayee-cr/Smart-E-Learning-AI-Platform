@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="catBg" x1="6" y1="4" x2="112" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="catGlow" x1="30" y1="26" x2="88" y2="94" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E9F6FF"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="104" height="104" rx="28" fill="url(#catBg)" fill-opacity="0.16"/>
+  <rect x="18" y="18" width="84" height="84" rx="24" fill="#FFFFFF" fill-opacity="0.66" stroke="#D7E2FF"/>
+  <rect x="30" y="32" width="60" height="54" rx="14" fill="url(#catBg)"/>
+  <rect x="36" y="40" width="48" height="14" rx="7" fill="url(#catGlow)" fill-opacity="0.88"/>
+  <rect x="36" y="60" width="34" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.86"/>
+  <circle cx="76" cy="65" r="10" fill="#FFFFFF" fill-opacity="0.24"/>
+</svg>

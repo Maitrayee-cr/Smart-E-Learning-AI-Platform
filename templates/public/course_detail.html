@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ course.title }} | Smart E-Learning{% endblock %}
+{% block content %}
+<section class="course-hero-banner mb-4"
+    {% if course.background_image %}
+        style="background-image: linear-gradient(120deg, rgba(15, 23, 42, 0.72), rgba(37, 99, 235, 0.48)), url('{{ course.background_image.url }}');"
+    {% elif course.thumbnail %}
+        style="background-image: linear-gradient(120deg, rgba(15, 23, 42, 0.72), rgba(37, 99, 235, 0.48)), url('{{ course.thumbnail.url }}');"
+    {% endif %}
+>
+    <div class="container py-5 course-hero-content">
+        <span class="badge text-bg-light mb-3">{{ course.category.name }}</span>
+        <h1 class="text-white mb-2">{{ course.title }}</h1>
+        <p class="text-white-50 mb-0">{{ course.short_description }}</p>
+    </div>
+</section>
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4 premium-panel course-about-card">
+                    <div class="card-body">
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge text-bg-primary">{{ course.category.name }}</span>
+                            <span class="badge text-bg-light">{{ course.get_level_display }}</span>
+                            <span class="badge text-bg-warning"><i class="bi bi-star-fill me-1"></i>{{ course.average_rating }}</span>
+                        </div>
+                        <p class="text-muted">{{ course.description }}</p>
+                        <div class="row text-center mt-4 g-3">
+                            <div class="col-4"><div class="metric-card"><h5>{{ course.duration_hours }}h</h5><p>Duration</p></div></div>
+                            <div class="col-4"><div class="metric-card"><h5>{{ course.total_students }}</h5><p>Students</p></div></div>
+                            <div class="col-4"><div class="metric-card"><h5>{{ course.language }}</h5><p>Language</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if course.full_course_video %}
+                    <div class="card border-0 shadow-sm mb-4 premium-panel">
+                        <div class="card-body">
+                            <h5 class="mb-3">Full Course Video</h5>
+                            {% if enrollment %}
+                                <video class="w-100 rounded-3 border" controls preload="auto" playsinline>
+                                    <source src="{{ course.full_course_video.url }}">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% else %}
+                                <div class="empty-state">
+                                    Enroll in this course to watch the full course video.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card border-0 shadow-sm mb-4 premium-panel">
+                    <div class="card-body">
+                        <h5 class="mb-3">Course Quiz</h5>
+                        {% if course_quiz %}
+                            <p class="text-muted mb-2">{{ course_quiz.title }} ({{ course_quiz.questions.count }} questions)</p>
+                            {% if request.user.is_authenticated and request.user.role == 'student' and enrollment %}
+                                <a href="{% url 'learning:attempt_quiz' course_quiz.id %}" class="btn btn-outline-primary">Start Quiz</a>
+                            {% elif request.user.is_authenticated and request.user.role == 'student' and not enrollment %}
+                                <a href="{% url 'learning:enroll_course' course.slug %}" class="btn btn-outline-primary">Enroll to Attempt Quiz</a>
+                            {% else %}
+                                <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Login to Attempt Quiz</a>
+                            {% endif %}
+                        {% else %}
+                            <div class="empty-state">Quiz has not been generated yet for this course.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm premium-panel course-reviews-card">
+                    <div class="card-body">
+                        <h5>Student Reviews</h5>
+                        {% for review in reviews %}
+                            <div class="review-item border-bottom py-3">
+                                <strong>{{ review.student.get_full_name|default:review.student.username }}</strong>
+                                <span class="text-warning ms-2"><i class="bi bi-star-fill me-1"></i>{{ review.rating }}</span>
+                                <p class="mb-0 text-muted">{{ review.comment }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No reviews yet. Be the first learner to review.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top course-sidebar-card modern-sidebar-card" style="top: 90px;">
+                    {% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" class="card-img-top" alt="{{ course.title }}">{% endif %}
+                    <div class="card-body">
+                        {% if ai_course_fit %}
+                            <div class="ai-fit-panel mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="ai-kicker mb-0">AI Match</span>
+                                    <span class="ai-match-score">{{ ai_course_fit.score }}%</span>
+                                </div>
+                                <h6 class="mb-1">{{ ai_course_fit.label }}</h6>
+                                <p class="small text-muted mb-2">{{ ai_course_fit.next_step }}</p>
+                                <ul class="small mb-0 ai-fit-reasons">
+                                    {% for reason in ai_course_fit.reasons %}
+                                        <li>{{ reason }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <h4 class="mb-3">{% if course.price == 0 %}Free{% else %}&#8377;{{ course.price|floatformat:2 }}{% endif %}</h4>
+                        {% if request.user.is_authenticated and request.user.role == 'student' %}
+                            {% if enrollment %}
+                                <a href="{% url 'learning:enrolled_course_detail' course.slug %}" class="btn btn-primary w-100 mb-2">Continue Learning</a>
+                            {% else %}
+                                {% if is_in_cart %}
+                                    <a href="{% url 'learning:cart_page' %}" class="btn btn-primary w-100 mb-2">Already in Cart</a>
+                                {% else %}
+                                    <a href="{% url 'learning:add_to_cart' course.slug %}" class="btn btn-primary w-100 mb-2">Add to Cart</a>
+                                {% endif %}
+                                {% if course.price > 0 %}
+                                    <a href="{% url 'learning:enroll_course' course.slug %}" class="btn btn-outline-primary w-100 mb-2">Buy Now</a>
+                                    <a href="{% url 'learning:cart_page' %}" class="btn btn-light border w-100 mb-2">Go to Cart</a>
+                                {% else %}
+                                    <a href="{% url 'learning:enroll_course' course.slug %}" class="btn btn-outline-primary w-100 mb-2">Enroll Now</a>
+                                    <a href="{% url 'learning:cart_page' %}" class="btn btn-light border w-100 mb-2">Go to Cart</a>
+                                {% endif %}
+                            {% endif %}
+                            <a href="{% url 'learning:wishlist_toggle' course.slug %}" class="btn btn-outline-primary w-100">
+                                {% if is_in_wishlist %}Remove from Wishlist{% else %}Save to Wishlist{% endif %}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100">Login to Enroll</a>
+                        {% endif %}
+                        <hr>
+                        <p class="small mb-1"><strong>Instructor:</strong> {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                        <p class="small mb-1"><strong>Level:</strong> {{ course.get_level_display }}</p>
+                        <p class="small mb-0"><strong>Category:</strong> {{ course.category.name }}</p>
+                        <hr>
+                        <ul class="list-unstyled small text-muted mb-0 course-trust-list">
+                            <li><i class="bi bi-shield-check text-success me-2"></i>Secure checkout experience</li>
+                            <li><i class="bi bi-download text-primary me-2"></i>Downloadable resources included</li>
+                            <li><i class="bi bi-patch-check text-warning me-2"></i>Certificate after completion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-5 related-courses-section">
+            <h5 class="mb-3">Related Courses</h5>
+            <div class="row g-3">
+                {% for related in related_courses %}
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm modern-course-card">
+                            {% if related.thumbnail %}
+                                <img src="{{ related.thumbnail.url }}" class="card-img-top" alt="{{ related.title }}">
+                            {% else %}
+                                <div class="placeholder-img position-relative d-flex align-items-end justify-content-start p-3">
+                                    <img src="{% static 'images/course-cover.svg' %}?v=20260331img2" alt="{{ related.title }}" class="placeholder-art">
+                                    <span class="placeholder-label">{{ related.category.name }}</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h6>{{ related.title }}</h6>
+                                <p class="small text-muted">{{ related.short_description|truncatechars:70 }}</p>
+                                <a href="{% url 'courses:course_detail' related.slug %}" class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12"><div class="empty-state">No related courses found.</div></div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if ai_related_recommendations %}
+            <section class="mt-5 related-courses-section">
+                <h5 class="mb-3">AI Suggested Next Courses</h5>
+                <div class="row g-3">
+                    {% for recommendation in ai_related_recommendations %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm modern-course-card">
+                                {% if recommendation.course.thumbnail %}
+                                    <img src="{{ recommendation.course.thumbnail.url }}" class="card-img-top" alt="{{ recommendation.course.title }}">
+                                {% else %}
+                                    <div class="placeholder-img position-relative d-flex align-items-end justify-content-start p-3">
+                                        <img src="{% static 'images/course-cover.svg' %}?v=20260331img2" alt="{{ recommendation.course.title }}" class="placeholder-art">
+                                        <span class="placeholder-label">{{ recommendation.course.category.name }}</span>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge text-bg-light">{{ recommendation.course.get_level_display }}</span>
+                                        <span class="ai-match-score">{{ recommendation.score }}%</span>
+                                    </div>
+                                    <h6>{{ recommendation.course.title }}</h6>
+                                    <p class="small text-muted mb-2">{{ recommendation.headline }}</p>
+                                    <p class="small mb-3">{{ recommendation.reasons|join:', ' }}</p>
+                                    <a href="{% url 'courses:course_detail' recommendation.course.slug %}" class="btn btn-sm btn-outline-primary">View Course</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

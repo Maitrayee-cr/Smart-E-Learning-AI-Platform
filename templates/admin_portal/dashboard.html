@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Admin Dashboard' subtitle='Platform-level monitoring and management' parent='Admin' %}
+<section class="py-4">
+    <div class="container">
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.total_users }}</h3><p>Total Users</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.total_courses }}</h3><p>Total Courses</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.total_enrollments }}</h3><p>Total Enrollments</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.total_certificates }}</h3><p>Certificates</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.total_students }}</h3><p>Students</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.total_instructors }}</h3><p>Instructors</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>{{ analytics.avg_rating|floatformat:1 }}</h3><p>Avg Rating</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><h3>&#8377;{{ analytics.revenue|floatformat:2 }}</h3><p>Total Revenue</p></div></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5>Platform Analytics</h5>
+                        <canvas id="adminPlatformChart" data-chart='{{ chart_data_json|escapejs }}'></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5>Quick Actions</h5>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'core:manage_users' %}" class="btn btn-outline-primary">Manage Users</a>
+                            <a href="{% url 'core:manage_categories' %}" class="btn btn-outline-primary">Manage Categories</a>
+                            <a href="{% url 'core:manage_courses' %}" class="btn btn-outline-primary">Manage Courses</a>
+                            <a href="{% url 'core:manage_messages' %}" class="btn btn-outline-primary">Manage Messages</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6>Recent Contact Messages</h6>
+                        {% for msg in recent_messages %}
+                            <div class="border-bottom py-2">
+                                <strong>{{ msg.name }}</strong>
+                                <p class="small text-muted mb-0">{{ msg.subject }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No recent messages.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6>Recent Enrollments</h6>
+                        {% for enrollment in recent_enrollments %}
+                            <div class="border-bottom py-2">
+                                <strong>{{ enrollment.student.username }}</strong> enrolled in {{ enrollment.course.title }}
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No enrollments yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Top Performing Students</h5>
+                            <span class="badge text-bg-light border">AI Analytics</span>
+                        </div>
+                        {% for item in ai_analytics.top_students %}
+                            <div class="border rounded-3 p-3 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ item.student.get_full_name|default:item.student.username }}</strong>
+                                    <span>{{ item.prediction.label }}</span>
+                                </div>
+                                <p class="small text-muted mb-0">Confidence {{ item.prediction.confidence }}% • Avg quiz {{ item.avg_quiz|floatformat:1 }}%</p>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No platform student analytics yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Weak Learners</h5>
+                            <span class="badge text-bg-light border">Risk Indicator</span>
+                        </div>
+                        {% for item in ai_analytics.weak_learners %}
+                            <div class="border rounded-3 p-3 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ item.student.get_full_name|default:item.student.username }}</strong>
+                                    <span>{{ item.prediction.probabilities.at_risk }}% risk</span>
+                                </div>
+                                <p class="small text-muted mb-0">{{ item.prediction.reasons|join:' ' }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No high-risk learners right now.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="mb-3">Most Popular Courses</h6>
+                        {% for course in ai_analytics.popular_courses %}
+                            <div class="border-bottom py-2">
+                                <strong>{{ course.title }}</strong>
+                                <p class="small text-muted mb-0">{{ course.student_count }} learners</p>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No course demand data yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="mb-3">AI KPIs</h6>
+                        <p class="small mb-2">Quiz Success Rate: <strong>{{ ai_analytics.quiz_success_rate }}%</strong></p>
+                        <p class="small mb-2">Recommendation Performance: <strong>{{ ai_analytics.recommendation_performance }}%</strong></p>
+                        <p class="small mb-0">Engagement Trends: attentive {{ ai_analytics.emotion_counts.attentive|default:0 }}, happy {{ ai_analytics.emotion_counts.happy|default:0 }}, confused {{ ai_analytics.emotion_counts.confused|default:0 }}, bored {{ ai_analytics.emotion_counts.bored|default:0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="mb-3">Plagiarism Alerts</h6>
+                        {% for submission in ai_analytics.flagged_submissions %}
+                            <div class="border-bottom py-2">
+                                <strong>{{ submission.student.username }}</strong> in {{ submission.course.title }}
+                                <p class="small text-muted mb-0">{{ submission.plagiarism_score }}% similarity{% if submission.matched_submission %} • matched with {{ submission.matched_submission.student.username }}{% endif %}</p>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No flagged submissions.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="mb-3">Platform Performance Bands</h6>
+                        <canvas id="adminAiPerformanceChart" data-chart='{{ ai_performance_chart_json|escapejs }}' data-chart-type="doughnut" data-chart-label="Students"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="mb-3">Engagement Trends</h6>
+                        <canvas id="adminEngagementChart" data-chart='{{ ai_engagement_chart_json|escapejs }}' data-chart-type="bar" data-chart-label="Snapshots"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

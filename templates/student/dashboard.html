@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Student Dashboard' subtitle='Track your learning journey and progress' parent='Student' %}
+<section class="py-4 dashboard-shell">
+    <div class="container">
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.enrollments }}</h3><p>Enrollments</p></div>
+                    <span class="widget-icon"><i class="bi bi-journal-text"></i></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.active_courses }}</h3><p>Active Courses</p></div>
+                    <span class="widget-icon"><i class="bi bi-lightning-charge"></i></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.completed_courses }}</h3><p>Completed</p></div>
+                    <span class="widget-icon"><i class="bi bi-check-circle"></i></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.avg_progress }}%</h3><p>Avg. Progress</p></div>
+                    <span class="widget-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.wishlist_count }}</h3><p>Wishlist</p></div>
+                    <span class="widget-icon"><i class="bi bi-bookmark-heart"></i></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.cart_count }}</h3><p>Cart</p></div>
+                    <span class="widget-icon"><i class="bi bi-cart3"></i></span>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="stat-card dashboard-stat">
+                    <div><h3>{{ stats.payment_success_count }}</h3><p>Successful Payments</p></div>
+                    <span class="widget-icon"><i class="bi bi-credit-card-2-front"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4 dashboard-card ai-insight-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                            <div>
+                                <span class="ai-kicker">AI Learning Insights</span>
+                                <h5 class="mb-1">{{ ai_insights.headline }}</h5>
+                                <p class="text-muted mb-0">{{ ai_insights.summary }}</p>
+                            </div>
+                            <div class="ai-score-badge">
+                                <i class="bi bi-cpu me-1"></i> Smart Profile
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            {% for tag in ai_insights.profile_tags %}
+                                <span class="ai-tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="row g-3">
+                            {% for item in ai_insights.action_items %}
+                                <div class="col-md-4">
+                                    <div class="ai-action-tile">
+                                        <span class="ai-step">{{ forloop.counter }}</span>
+                                        <p class="mb-0 small">{{ item }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm mb-4 dashboard-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="ai-kicker">Premium AI Tools</span>
+                                <h5 class="mb-0">Use These Inside Your Enrolled Courses</h5>
+                            </div>
+                            <a href="{% url 'learning:my_learning' %}" class="btn btn-sm btn-outline-primary">Open My Learning</a>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="ai-action-tile">
+                                    <strong><i class="bi bi-camera-video me-1"></i> AI Video Summarizer</strong>
+                                    <p class="small text-muted mb-0">Open any enrolled course to see lecture summary points, key topics, and automatic lesson highlights.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="ai-action-tile">
+                                    <strong><i class="bi bi-emoji-smile me-1"></i> Emotion Detection</strong>
+                                    <p class="small text-muted mb-0">Upload a face snapshot in a course workspace to classify engagement as attentive, confused, bored, or happy.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="ai-action-tile">
+                                    <strong><i class="bi bi-mic me-1"></i> Voice Assistant</strong>
+                                    <p class="small text-muted mb-0">Click the Assistant mic button to ask questions by voice and receive chatbot guidance.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="ai-action-tile">
+                                    <strong><i class="bi bi-shield-check me-1"></i> Plagiarism Detection</strong>
+                                    <p class="small text-muted mb-0">Paste assignment answers inside a course workspace to get similarity percentage and matched reports.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm h-100 dashboard-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="mb-0">Recent Learning</h5>
+                            <a href="{% url 'learning:my_learning' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        {% for enrollment in latest_enrollments %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ enrollment.course.title }}</strong>
+                                    <span>{{ enrollment.progress_percentage }}%</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar" style="width: {{ enrollment.progress_percentage }}%"></div>
+                                </div>
+                                <a href="{% url 'learning:enrolled_course_detail' enrollment.course.slug %}" class="small">Continue</a>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">No enrolled courses yet. Start from the course catalog.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4 dashboard-card ai-insight-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Performance Prediction</h6>
+                            <span class="ai-match-score">{{ performance_prediction.confidence }}%</span>
+                        </div>
+                        <p class="mb-1"><strong>{{ performance_prediction.label }}</strong> <span class="text-muted">({{ performance_prediction.risk_indicator }})</span></p>
+                        <p class="small text-muted">{{ performance_prediction.explanation }}</p>
+                        <div class="small mb-2">At Risk: {{ performance_prediction.probabilities.at_risk }}% | Average: {{ performance_prediction.probabilities.average }}% | High: {{ performance_prediction.probabilities.high_performing }}%</div>
+                        <ul class="small text-muted mb-0">
+                            {% for reason in performance_prediction.reasons %}
+                                <li>{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm mb-4 dashboard-card">
+                    <div class="card-body">
+                        <h6 class="mb-3">Progress Chart</h6>
+                        <canvas id="studentProgressChart" data-chart='{{ chart_data_json|escapejs }}'></canvas>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm mb-4 dashboard-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">AI Course Recommendations</h6>
+                            <span class="small text-muted">Ranked for you</span>
+                        </div>
+                        {% for recommendation in ai_recommendations %}
+                            <div class="ai-recommendation-item">
+                                <div class="d-flex justify-content-between align-items-start gap-3">
+                                    <div>
+                                        <strong>{{ recommendation.course.title }}</strong>
+                                        <p class="small text-muted mb-1">{{ recommendation.headline }}</p>
+                                        <p class="small mb-2">{{ recommendation.reasons|join:', ' }}</p>
+                                        <a href="{% url 'courses:course_detail' recommendation.course.slug %}" class="small">View Course</a>
+                                    </div>
+                                    <span class="ai-match-score">{{ recommendation.score }}%</span>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">The AI engine will recommend courses here after you start learning.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if optimized_learning_path %}
+                    <div class="card border-0 shadow-sm mb-4 dashboard-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Learning Path Optimization</h6>
+                                <span class="small text-muted">AI next step</span>
+                            </div>
+                            {% for step in optimized_learning_path.revision_steps %}
+                                <div class="ai-action-tile mb-2">
+                                    <p class="mb-0 small">{{ step }}</p>
+                                </div>
+                            {% endfor %}
+                            {% if optimized_learning_path.weak_lessons %}
+                                <hr>
+                                <p class="small fw-semibold mb-2">Weak-topic revision path</p>
+                                {% for weak in optimized_learning_path.weak_lessons %}
+                                    <div class="small text-muted mb-2">{{ weak.title }}{% if weak.score %} - {{ weak.score }}%{% endif %} - {{ weak.action }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="card border-0 shadow-sm dashboard-card">
+                    <div class="card-body">
+                        <h6 class="mb-3">Learning Tips</h6>
+                        <ul class="small text-muted mb-0">
+                            <li>Complete lessons in sequence for better retention.</li>
+                            <li>Download notes/resources for revision.</li>
+                            <li>Track progress regularly from this dashboard.</li>
+                            <li>Use the Assistant mic button for voice-based help.</li>
+                        </ul>
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'learning:wishlist_page' %}" class="btn btn-sm btn-outline-primary">Open Wishlist</a>
+                            <a href="{% url 'learning:cart_page' %}" class="btn btn-sm btn-outline-primary">Open Cart</a>
+                            <a href="{% url 'learning:payment_history' %}" class="btn btn-sm btn-outline-primary">Payment History</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

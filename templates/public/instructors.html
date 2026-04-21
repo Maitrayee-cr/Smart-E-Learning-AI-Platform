@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Instructors | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Our Instructors' subtitle='Learn from skilled mentors and educators' parent='Team' %}
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for instructor in page_obj %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <img src="{% static 'images/instructor-avatar.svg' %}?v=20260331img2" alt="{{ instructor.username }}" class="avatar-circle mb-3">
+                            <h5>{{ instructor.get_full_name|default:instructor.username }}</h5>
+                            <p class="text-muted">{{ instructor.instructor_profile.headline|default:'Dedicated Instructor' }}</p>
+                            <p class="mb-2"><strong>Qualification:</strong> {{ instructor.instructor_profile.qualification|default:'N/A' }}</p>
+                            <p class="mb-2"><strong>Experience:</strong> {{ instructor.instructor_profile.experience_years }} years</p>
+                            <span class="badge text-bg-primary">{{ instructor.instructor_courses.count }} Courses</span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12"><div class="empty-state">No instructors found.</div></div>
+            {% endfor %}
+        </div>
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    </div>
+</section>
+{% endblock %}

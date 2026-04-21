@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Checkout | {{ course.title }}{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Course Checkout' subtitle='Choose payment method to continue enrollment' parent=course.title %}
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">{{ course.title }}</h5>
+                        <p class="text-muted mb-4">{{ course.short_description }}</p>
+
+                        <div class="p-3 rounded-3 bg-light border mb-4 d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Total Payable</span>
+                            <span class="h5 mb-0 text-primary">&#8377;{{ course.price|floatformat:2 }}</span>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{{ payment_form.payment_method.label }}</label>
+                                {% if payment_form.payment_method.errors %}
+                                    <div class="text-danger small mb-2">{{ payment_form.payment_method.errors|striptags }}</div>
+                                {% endif %}
+                                <div class="d-grid gap-2">
+                                    {% for radio in payment_form.payment_method %}
+                                        <label class="border rounded-3 p-3 d-flex justify-content-between align-items-center">
+                                            <span>{{ radio.choice_label }}</span>
+                                            <span>{{ radio.tag }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div id="paymentDetailsBlock" class="mb-3">
+                                {% include 'components/payment_details_fields.html' with payment_form=payment_form %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{{ payment_form.mock_result.label }}</label>
+                                {{ payment_form.mock_result }}
+                                <small class="text-muted d-block mt-1">Demo-only control to simulate success, failure, or pending payment.</small>
+                            </div>
+
+                            <div class="form-check mb-4">
+                                {{ payment_form.agree_terms }}
+                                <label class="form-check-label" for="{{ payment_form.agree_terms.id_for_label }}">
+                                    {{ payment_form.agree_terms.label }}
+                                </label>
+                                {% if payment_form.agree_terms.errors %}
+                                    <div class="text-danger small mt-1">{{ payment_form.agree_terms.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary">Pay & Enroll</button>
+                                <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail.url }}" class="card-img-top" alt="{{ course.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="mb-3">Order Summary</h6>
+                        <p class="small mb-1"><strong>Instructor:</strong> {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                        <p class="small mb-1"><strong>Level:</strong> {{ course.get_level_display }}</p>
+                        <p class="small mb-1"><strong>Language:</strong> {{ course.language }}</p>
+                        <p class="small mb-0"><strong>Duration:</strong> {{ course.duration_hours }} hours</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const methodRadios = document.querySelectorAll('input[name="payment_method"]');
+        const detailGroups = document.querySelectorAll('.payment-detail-group');
+
+        function toggleGroups() {
+            const selected = document.querySelector('input[name="payment_method"]:checked');
+            const method = selected ? selected.value : '';
+
+            detailGroups.forEach((group) => {
+                const show = group.dataset.paymentMethod === method;
+                group.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        methodRadios.forEach((radio) => radio.addEventListener('change', toggleGroups));
+        toggleGroups();
+    });
+</script>
+{% endblock %}

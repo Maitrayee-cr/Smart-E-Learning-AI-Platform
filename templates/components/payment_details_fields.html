@@ -1,0 +1,61 @@
+<div class="alert alert-info custom-alert py-2 small mb-3">
+    Demo payment page: do not enter real card/UPI credentials.
+</div>
+
+<div class="payment-detail-group" data-payment-method="upi">
+    <label class="form-label">UPI ID</label>
+    {{ payment_form.upi_id }}
+    {% if payment_form.upi_id.errors %}
+        <div class="text-danger small mt-1">{{ payment_form.upi_id.errors|striptags }}</div>
+    {% endif %}
+</div>
+
+<div class="payment-detail-group" data-payment-method="card">
+    <div class="row g-2">
+        <div class="col-12">
+            <label class="form-label">Card Holder Name</label>
+            {{ payment_form.card_holder_name }}
+            {% if payment_form.card_holder_name.errors %}
+                <div class="text-danger small mt-1">{{ payment_form.card_holder_name.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        <div class="col-12">
+            <label class="form-label">Card Number</label>
+            {{ payment_form.card_number }}
+            {% if payment_form.card_number.errors %}
+                <div class="text-danger small mt-1">{{ payment_form.card_number.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        <div class="col-6">
+            <label class="form-label">Expiry (MM/YY)</label>
+            {{ payment_form.card_expiry }}
+            {% if payment_form.card_expiry.errors %}
+                <div class="text-danger small mt-1">{{ payment_form.card_expiry.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        <div class="col-6">
+            <label class="form-label">CVV</label>
+            {{ payment_form.card_cvv }}
+            {% if payment_form.card_cvv.errors %}
+                <div class="text-danger small mt-1">{{ payment_form.card_cvv.errors|striptags }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="payment-detail-group" data-payment-method="net_banking">
+    <label class="form-label">Bank Name</label>
+    {{ payment_form.bank_name }}
+    {% if payment_form.bank_name.errors %}
+        <div class="text-danger small mt-1">{{ payment_form.bank_name.errors|striptags }}</div>
+    {% endif %}
+    <label class="form-label mt-2">Net Banking User ID</label>
+    {{ payment_form.netbanking_user_id }}
+    {% if payment_form.netbanking_user_id.errors %}
+        <div class="text-danger small mt-1">{{ payment_form.netbanking_user_id.errors|striptags }}</div>
+    {% endif %}
+</div>
+
+<div class="payment-detail-group" data-payment-method="wallet">
+    <div class="small text-muted">Wallet payment selected. Continue to complete checkout.</div>
+</div>

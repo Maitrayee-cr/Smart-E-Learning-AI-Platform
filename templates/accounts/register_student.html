@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Student Registration | Smart E-Learning{% endblock %}
+{% block content %}
+<section class="auth-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <span class="badge text-bg-primary mb-2">Student Onboarding</span>
+                        <h3 class="mb-2">Student Registration</h3>
+                        <p class="text-muted mb-4">Create your account to enroll, learn, and earn certificates.</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger py-2">
+                                    {% for error in form.non_field_errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="form-label">First Name</label>{{ form.first_name }}</div>
+                                <div class="col-md-6"><label class="form-label">Last Name</label>{{ form.last_name }}</div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Username</label>{{ form.username }}
+                                    <div class="form-text">{{ form.username.help_text }}</div>
+                                    {% for error in form.username.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6"><label class="form-label">Email</label>{{ form.email }}</div>
+                                <div class="col-md-6"><label class="form-label">Phone</label>{{ form.phone }}</div>
+                                <div class="col-md-6"><label class="form-label">Password</label>{{ form.password1 }}</div>
+                                <div class="col-md-6"><label class="form-label">Confirm Password</label>{{ form.password2 }}</div>
+                                <div class="col-12"><button class="btn btn-primary">Create Account</button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

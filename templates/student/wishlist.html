@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}My Wishlist | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='My Wishlist' subtitle='Saved courses you want to learn next' parent='Student' %}
+<section class="py-4">
+    <div class="container">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'learning:cart_page' %}" class="btn btn-outline-primary">Go to Cart</a>
+        </div>
+        <div class="row g-4">
+            {% for item in page_obj %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        {% if item.course.thumbnail %}
+                            <img src="{{ item.course.thumbnail.url }}" class="card-img-top" alt="{{ item.course.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="mb-2">{{ item.course.title }}</h6>
+                            <p class="small text-muted mb-2">{{ item.course.short_description|truncatechars:95 }}</p>
+                            <p class="small mb-3">
+                                <strong>Price:</strong>
+                                {% if item.course.price == 0 %}Free{% else %}&#8377;{{ item.course.price|floatformat:2 }}{% endif %}
+                            </p>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'courses:course_detail' item.course.slug %}" class="btn btn-sm btn-outline-secondary">View Course</a>
+                                {% if item.course.id in enrolled_course_ids %}
+                                    <a href="{% url 'learning:enrolled_course_detail' item.course.slug %}" class="btn btn-sm btn-success">Continue Learning</a>
+                                {% else %}
+                                    {% if item.course.id in cart_course_ids %}
+                                        <a href="{% url 'learning:cart_page' %}" class="btn btn-sm btn-primary">Already in Cart</a>
+                                    {% else %}
+                                        <a href="{% url 'learning:add_to_cart' item.course.slug %}?next={% url 'learning:wishlist_page' %}" class="btn btn-sm btn-primary">Add to Cart</a>
+                                    {% endif %}
+                                {% endif %}
+                                <a href="{% url 'learning:wishlist_toggle' item.course.slug %}?next={% url 'learning:wishlist_page' %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="empty-state">
+                        No courses saved yet. Browse courses and click "Save to Wishlist".
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Management | Instructor{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Quiz Management' subtitle=lesson.title parent=course.title %}
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-3">Create / Update Quiz</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-2"><label class="form-label">Title</label>{{ form.title }}</div>
+                            <div class="mb-2"><label class="form-label">Description</label>{{ form.description }}</div>
+                            <div class="mb-2"><label class="form-label">Pass %</label>{{ form.pass_percentage }}</div>
+                            <div class="mb-2"><label class="form-label">Time Limit (min)</label>{{ form.time_limit_minutes }}</div>
+                            <div class="mb-3"><label class="form-label">Active</label><div>{{ form.is_active }}</div></div>
+                            <button class="btn btn-primary">Save Quiz</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Smart Quiz Generator</h5>
+                            <span class="badge text-bg-light border">NLP</span>
+                        </div>
+                        <form method="post" action="{% url 'courses:ai_generate_quiz' course.slug section.id lesson.id %}">
+                            {% csrf_token %}
+                            <div class="mb-2"><label class="form-label">Question Count</label>{{ ai_generator_form.question_count }}</div>
+                            <div class="mb-2"><label class="form-label">Difficulty</label>{{ ai_generator_form.difficulty }}</div>
+                            <div class="mb-3"><label class="form-label">Extra Notes / Uploaded Text</label>{{ ai_generator_form.source_text }}</div>
+                            <button class="btn btn-outline-primary">Generate AI MCQs</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                {% if quiz %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Add Question</h5>
+                            <form method="post" action="{% url 'courses:question_add' quiz.id %}">
+                                {% csrf_token %}
+                                <div class="row g-2">
+                                    <div class="col-12">{{ question_form.text }}</div>
+                                    <div class="col-md-2">{{ question_form.order }}</div>
+                                    <div class="col-md-2">{{ question_form.marks }}</div>
+                                    <div class="col-md-4">{{ question_form.correct_option }}</div>
+                                    <div class="col-md-6">{{ question_form.option_1 }}</div>
+                                    <div class="col-md-6">{{ question_form.option_2 }}</div>
+                                    <div class="col-md-6">{{ question_form.option_3 }}</div>
+                                    <div class="col-md-6">{{ question_form.option_4 }}</div>
+                                    <div class="col-12"><button class="btn btn-primary">Add Question</button></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="mb-3">Question Bank</h5>
+                            {% for question in questions %}
+                                <div class="border rounded-3 p-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>{{ question.order }}. {{ question.text }}</strong>
+                                            <div class="small text-muted">Difficulty: {{ question.get_difficulty_display }} • Marks: {{ question.marks }}</div>
+                                        </div>
+                                        <form method="post" action="{% url 'courses:question_delete' quiz.id question.id %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                                    </div>
+                                    <ul class="mb-0 mt-2">
+                                        {% for option in question.options.all %}
+                                            <li {% if option.is_correct %}class="text-success fw-semibold"{% endif %}>{{ option.text }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% empty %}
+                                <div class="empty-state">No questions added yet.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty-state">Save quiz details first to start adding questions.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

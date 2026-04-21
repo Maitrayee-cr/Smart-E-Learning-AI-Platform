@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Quiz | Smart E-Learning{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title=quiz.title subtitle='Attempt the quiz carefully and submit once' parent='Quiz' %}
+<section class="py-4">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for question in questions %}
+                        <div class="mb-4 p-3 border rounded-3">
+                            <h6 class="mb-3">Q{{ forloop.counter }}. {{ question.text }}</h6>
+                            {% for option in question.options.all %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="{{ option.id }}" id="opt{{ option.id }}">
+                                    <label class="form-check-label" for="opt{{ option.id }}">{{ option.text }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">No questions available in this quiz.</div>
+                    {% endfor %}
+                    <button class="btn btn-primary">Submit Quiz</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

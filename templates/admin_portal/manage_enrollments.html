@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Manage Enrollments | Admin{% endblock %}
+{% block content %}
+{% include 'components/page_header.html' with title='Manage Enrollments' subtitle='Monitor student registrations and progress details' parent='Admin' %}
+<section class="py-4">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light"><tr><th>Student</th><th>Course</th><th>Payment</th><th>Progress</th><th>Status</th><th>Enrolled At</th></tr></thead>
+                    <tbody>
+                        {% for enrollment in page_obj %}
+                            <tr>
+                                <td>{{ enrollment.student.get_full_name|default:enrollment.student.username }}</td>
+                                <td>{{ enrollment.course.title }}</td>
+                                <td>
+                                    {% if enrollment.payment_status == 'free' %}
+                                        <span class="badge text-bg-success">Free</span>
+                                    {% elif enrollment.payment_status == 'paid' %}
+                                        <span class="badge text-bg-primary">Paid</span>
+                                        <div class="small text-muted">{{ enrollment.get_payment_method_display }} • &#8377;{{ enrollment.paid_amount|floatformat:2 }}</div>
+                                    {% elif enrollment.payment_status == 'pending' %}
+                                        <span class="badge text-bg-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge text-bg-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: {{ enrollment.progress_percentage }}%"></div></div>
+                                    <small>{{ enrollment.progress_percentage }}%</small>
+                                </td>
+                                <td><span class="badge text-bg-light border">{{ enrollment.status|title }}</span></td>
+                                <td>{{ enrollment.enrolled_at|date:'d M Y H:i' }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="6" class="text-center py-4">No enrollments found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    </div>
+</section>
+{% endblock %}

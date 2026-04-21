@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140" fill="none">
+  <defs>
+    <linearGradient id="tesRing" x1="8" y1="6" x2="132" y2="134" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="tesBg" x1="24" y1="20" x2="116" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F2F8FF"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="70" cy="70" r="66" fill="url(#tesRing)" fill-opacity="0.16"/>
+  <circle cx="70" cy="70" r="58" fill="url(#tesBg)" stroke="#D0E6FF" stroke-width="2"/>
+
+  <ellipse cx="70" cy="64" rx="22" ry="24" fill="#FFD7CA"/>
+  <path d="M48 62C48 47 58 36 70 36C82 36 92 47 92 62V70H48V62Z" fill="#284B99"/>
+  <rect x="58" y="87" width="24" height="8" rx="4" fill="#FFD7CA"/>
+  <path d="M36 116C40 98 53 88 70 88C87 88 100 98 104 116" fill="url(#tesRing)" fill-opacity="0.9"/>
+  <circle cx="102" cy="38" r="12" fill="#FFFFFF" stroke="#CFE4FF"/>
+  <path d="M98 38H106M102 34V42" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
+</svg>
