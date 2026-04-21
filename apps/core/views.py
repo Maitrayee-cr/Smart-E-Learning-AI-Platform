@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.db.models import Avg, Count, Q, Sum
+from django.db.utils import OperationalError, ProgrammingError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -24,30 +25,49 @@ User = get_user_model()
 
 def home(request):
     excluded_categories = ['School Courses', 'Commerce', 'Aptitude']
-    featured_courses = (
-        Course.objects.filter(is_published=True, is_featured=True)
-        .exclude(category__name__in=excluded_categories)
-        .select_related('category', 'instructor')[:8]
-    )
-    latest_courses = (
-        Course.objects.filter(is_published=True)
-        .exclude(category__name__in=excluded_categories)
-        .select_related('category', 'instructor')[:8]
-    )
-    top_categories = (
-        Category.objects.filter(is_active=True)
-        .exclude(name__iexact='School Courses')
-        .exclude(name__iexact='Commerce')
-        .exclude(name__iexact='Aptitude')
-        .annotate(course_count=Count('courses'))
-        .order_by('-course_count')[:8]
-    )
-    instructors = (
-        User.objects.filter(role='instructor', instructor_profile__approved=True)
-        .annotate(course_count=Count('instructor_courses'))
-        .order_by('-course_count')[:6]
-    )
-    testimonials = Testimonial.objects.filter(is_featured=True)[:6]
+    try:
+        featured_courses = (
+            Course.objects.filter(is_published=True, is_featured=True)
+            .exclude(category__name__in=excluded_categories)
+            .select_related('category', 'instructor')[:8]
+        )
+        latest_courses = (
+            Course.objects.filter(is_published=True)
+            .exclude(category__name__in=excluded_categories)
+            .select_related('category', 'instructor')[:8]
+        )
+        top_categories = (
+            Category.objects.filter(is_active=True)
+            .exclude(name__iexact='School Courses')
+            .exclude(name__iexact='Commerce')
+            .exclude(name__iexact='Aptitude')
+            .annotate(course_count=Count('courses'))
+            .order_by('-course_count')[:8]
+        )
+        instructors = (
+            User.objects.filter(role='instructor', instructor_profile__approved=True)
+            .annotate(course_count=Count('instructor_courses'))
+            .order_by('-course_count')[:6]
+        )
+        testimonials = Testimonial.objects.filter(is_featured=True)[:6]
+        stats = {
+            'students': User.objects.filter(role='student').count(),
+            'instructors': User.objects.filter(role='instructor').count(),
+            'courses': Course.objects.filter(is_published=True).exclude(category__name__in=excluded_categories).count(),
+            'enrollments': Enrollment.objects.count(),
+        }
+    except (OperationalError, ProgrammingError):
+        featured_courses = []
+        latest_courses = []
+        top_categories = []
+        instructors = []
+        testimonials = []
+        stats = {
+            'students': 0,
+            'instructors': 0,
+            'courses': 0,
+            'enrollments': 0,
+        }
 
     context = {
         'featured_courses': featured_courses,
@@ -56,12 +76,7 @@ def home(request):
         'instructors': instructors,
         'testimonials': testimonials,
         'personalized_recommendations': [],
-        'stats': {
-            'students': User.objects.filter(role='student').count(),
-            'instructors': User.objects.filter(role='instructor').count(),
-            'courses': Course.objects.filter(is_published=True).exclude(category__name__in=excluded_categories).count(),
-            'enrollments': Enrollment.objects.count(),
-        },
+        'stats': stats,
     }
     if request.user.is_authenticated and request.user.role == 'student':
         context['personalized_recommendations'] = get_personalized_recommendations(request.user, limit=4)
