@@ -1,7 +1,5 @@
 # AI-Powered Smart E-Learning Management System
 
-GTU Final Year Project (Semester 8) built with Django, SQLite, Bootstrap 5, and JavaScript.
-
 ## Project Overview
 
 Smart E-Learning is a role-based LMS with separate workflows for Student, Instructor, and Admin.
