@@ -6,6 +6,11 @@
       "use": "@vercel/python"
     }
   ],
+  "functions": {
+    "smart_lms/wsgi.py": {
+      "includeFiles": "templates/**"
+    }
+  },
   "routes": [
     {
       "src": "/static/(.*)",

@@ -6,7 +6,7 @@ IS_VERCEL = bool(os.getenv('VERCEL'))
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-key-for-production')
 
-DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
+DEBUG = os.getenv('DJANGO_DEBUG', 'False' if IS_VERCEL else 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
