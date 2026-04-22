@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "smart_lms/wsgi.py",
-      "use": "@vercel/python"
-    }
-  ],
   "routes": [
     {
       "src": "/static/(.*)",
