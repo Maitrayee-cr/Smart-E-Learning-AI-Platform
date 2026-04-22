@@ -1,7 +1,11 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 from django.urls import include, path
+
+super_admin_site = AdminSite(name='super_admin')
+super_admin_site._registry = admin.site._registry.copy()
 
 urlpatterns = [
     path('', include('apps.core.urls')),
@@ -9,7 +13,7 @@ urlpatterns = [
     path('courses/', include('apps.courses.urls')),
     path('learning/', include('apps.learning.urls')),
     path('admin/', admin.site.urls),
-    path('super-admin/', admin.site.urls),
+    path('super-admin/', super_admin_site.urls),
 ]
 
 if settings.DEBUG:

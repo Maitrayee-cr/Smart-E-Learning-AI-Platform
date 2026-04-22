@@ -2,6 +2,23 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def load_local_env(env_path):
+    if not env_path.exists():
+        return
+    for line in env_path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
+
+
+load_local_env(BASE_DIR / '.env')
+
 IS_VERCEL = bool(os.getenv('VERCEL'))
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-key-for-production')
@@ -113,7 +130,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 GOOGLE_CLOUD_VISION_API_KEY = os.getenv('GOOGLE_CLOUD_VISION_API_KEY', '')
 HF_TOKEN = os.getenv('HF_TOKEN', '')
-HUGGINGFACE_HUB_TOKEN = os.getenv('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', HF_TOKEN)
+HUGGINGFACE_HUB_TOKEN = os.getenv('HUGGINGFACE_HUB_TOKEN', HF_TOKEN)
 HUGGINGFACE_EMOTION_MODEL = os.getenv('HUGGINGFACE_EMOTION_MODEL', 'dima806/facial_emotions_image_detection')
 
 CSRF_COOKIE_HTTPONLY = False

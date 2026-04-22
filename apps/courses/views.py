@@ -31,6 +31,7 @@ def course_list(request):
         .exclude(category__name__in=excluded_categories)
         .select_related('instructor', 'category')
         .annotate(avg_rating=Avg('reviews__rating'))
+        .order_by('-created_at')
     )
     form = CourseFilterForm(request.GET or None)
 
