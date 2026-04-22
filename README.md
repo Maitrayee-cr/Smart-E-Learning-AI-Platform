@@ -164,7 +164,7 @@ Do not commit local secrets, local database files, virtual environments, generat
 Recommended files to commit:
 
 ```bash
-git add api apps smart_lms templates static manage.py requirements.txt vercel.json build_files.sh README.md .gitignore .env.example
+git add api apps smart_lms templates static manage.py requirements.txt README.md .gitignore .env.example
 git commit -m "Prepare Django LMS project for GitHub"
 git push -u origin main
 ```
