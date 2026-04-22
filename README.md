@@ -29,7 +29,6 @@ Current certificate rule:
 - AI video summarizer that produces lesson highlights and key topics from course notes and lesson metadata
 - Simulated emotion detection from uploaded snapshots with engagement analytics for instructor dashboards
 - Optional Hugging Face emotion model support for low-cost/free-tier engagement analysis when `HF_TOKEN` is configured
-- Optional Google Cloud Vision Face Detection support when `GOOGLE_CLOUD_VISION_API_KEY` is configured
 - AI analytics dashboards for instructor and admin views with charts for performance bands, engagement trends, popularity, and quiz success
 - Plagiarism detection for submitted answer text with similarity score and matched report
 - Personalized homepage recommendations for logged-in students
@@ -102,14 +101,7 @@ export HUGGINGFACE_EMOTION_MODEL="dima806/facial_emotions_image_detection"
 python manage.py runserver
 ```
 
-Optional Google Vision setup for emotion detection:
-
-```bash
-export GOOGLE_CLOUD_VISION_API_KEY="your_google_cloud_vision_api_key"
-python manage.py runserver
-```
-
-Provider order is Hugging Face first, Google Vision second, and local simulated fallback last.
+Provider order is Hugging Face first, then the local simulated fallback.
 The Hugging Face provider uses the current router endpoint: `https://router.huggingface.co/hf-inference/models/...`.
 
 6. Open in browser
@@ -162,6 +154,31 @@ smart_lms/
   static/
   media/
   manage.py
+```
+
+## GitHub Resume Submission
+
+This project is ready to share as a GitHub repository for resume or portfolio use.
+Do not commit local secrets, local database files, virtual environments, generated static files, or uploaded media.
+
+Recommended files to commit:
+
+```bash
+git add api apps smart_lms templates static manage.py requirements.txt vercel.json build_files.sh README.md .gitignore .env.example
+git commit -m "Prepare Django LMS project for GitHub"
+git push -u origin main
+```
+
+Do not commit:
+
+```text
+.env
+db.sqlite3
+.venv/
+.venv_mac/
+media/
+staticfiles/
+.DS_Store
 ```
 
 ## Notes For Final Submission
