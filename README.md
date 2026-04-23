@@ -1,99 +1,256 @@
-# AI-Powered Smart E-Learning Management System
+# Smart E-Learning Management System
 
-## Project Overview
+An AI-enhanced Learning Management System built with Django, focused on personalized recommendations, learner analytics, smart quiz generation, engagement analysis, and explainable learning guidance. The platform supports students, instructors, and admins while showcasing how machine learning style systems can be integrated into a real product workflow.
 
-Smart E-Learning is a role-based LMS with separate workflows for Student, Instructor, and Admin.
-It supports course publishing, enrollment, mock payment, quiz attempts, certificate generation, and an explainable AI recommendation layer.
+This project is especially suited for an AI/ML-focused portfolio because it demonstrates recommendation logic, learner profiling, NLP-style content processing, rule-based prediction pipelines, explainable scoring, and optional computer-vision-based engagement analysis inside a working web application.
 
-Current certificate rule:
-- Student must complete full course video progress (100%)
-- Student must pass the course quiz
+## Highlights
+
+- Role-based LMS for students, instructors, and platform admins
+- Applied AI/ML features integrated into a real education product workflow
+- Course catalog with categories, search, filters, featured courses, ratings, wishlist, and cart
+- Mock checkout flow with UPI, card, net banking, and wallet payment options
+- Course progress tracking, quiz attempts, result history, and certificate generation
+- Instructor tools for course, section, lesson, video, and quiz management
+- Admin portal for users, courses, categories, enrollments, reviews, contact messages, and platform metrics
+- AI-powered learner experience with recommendations, chatbot guidance, course match scores, performance insights, quiz generation, video summaries, and engagement analysis
+- Seeded demo data for quick project walkthroughs and viva/interview demos
+- Vercel-compatible entry point plus standard Django local development setup
+
+## Product Walkthrough
+
+### 1. AI-first landing page
+
+Shows the platform positioning around AI-guided learning, course discovery, and personalized learning support.
+
+![Smart E-Learning home hero](docs/screenshots/home-hero.png)
+
+### 2. Explainable AI layer
+
+Highlights the core AI product concepts surfaced in the UI: recommendation engine, progress insights, course match scoring, and chatbot assistance.
+
+![AI layer section](docs/screenshots/ai-layer.png)
+
+### 3. Advanced AI modules
+
+Demonstrates additional AI-driven features built into the LMS, including video summarization, emotion detection, voice assistant support, analytics, and plagiarism checks.
+
+![Advanced AI features](docs/screenshots/advanced-ai-features.png)
+
+### 4. Student dashboard with assistant
+
+The dashboard combines learning analytics, profile signals, progress tracking, and an LMS-aware chatbot that responds to student questions.
+
+![Student dashboard and chatbot assistant](docs/screenshots/student-dashboard-chatbot.png)
+
+### 5. Course workspace with engagement analysis
+
+Inside an enrolled course, the learner can track progress, unlock certificates, watch course content, and use emotion detection with optional Hugging Face-backed analysis.
+
+![Course page with emotion detection](docs/screenshots/course-emotion-detection.png)
+
+### 6. Learning path + plagiarism detection
+
+Shows predictive next-step guidance, weak-topic revision support, quiz performance, and assignment similarity checking in the course workspace.
+
+![Learning path and plagiarism detection](docs/screenshots/course-plagiarism-learning-path.png)
+
+### 7. AI video summarizer output
+
+Illustrates the generated lecture highlights, extracted key topics, and lesson summary view presented inside the student experience.
+
+![AI video summarizer output](docs/screenshots/video-summarizer.png)
 
 ## Tech Stack
 
-- Frontend: HTML5, CSS3, JavaScript, Bootstrap 5, Chart.js
-- Backend: Python, Django
-- Database: SQLite (development-ready, structure is RDBMS friendly)
+| Layer | Technologies |
+| --- | --- |
+| Backend | Python, Django 5 |
+| Frontend | HTML5, CSS3, JavaScript, Bootstrap 5 |
+| Database | SQLite for development |
+| Charts/UI | Chart.js, Bootstrap components |
+| Media | Django file/image uploads, Pillow |
+| Deployment | Gunicorn, WhiteNoise, Vercel entry point |
+| Optional AI Provider | Hugging Face or Google Vision for engagement/emotion analysis |
 
-## Key Features
+## Core Modules
 
-### AI Features
+```text
+apps/
+  accounts/   Custom user model, student/instructor profiles, authentication
+  core/       Public pages, dashboards, chatbot, FAQs, contact, site services
+  courses/    Categories, courses, sections, lessons, resources, quizzes, reviews
+  learning/   Enrollments, progress, payments, certificates, AI services
+smart_lms/    Project settings, URLs, WSGI/ASGI, global context processors
+templates/    Public, student, instructor, admin, and account templates
+static/       CSS, JavaScript, images, and dashboard chart scripts
+api/          Vercel-compatible Django handler
+```
 
-- Personalized course recommendation engine using hybrid content-based and collaborative signals from learner interests, enrollment history, completion, and quiz performance
-- AI learning insights on the student dashboard with milestone guidance and next-action suggestions
-- AI course match scoring on course detail pages with explainable recommendation reasons
-- AI chatbot tutor for topic explanation, doubt solving, course guidance, voice input, and LMS-aware student answers
-- Smart quiz generator for instructors that auto-builds MCQs from lesson notes with answer keys and difficulty labels
-- Student performance prediction with risk, average, or high-performing probability bands on the dashboard
-- Learning path optimization with next-best lessons and weak-topic revision guidance
-- AI video summarizer that produces lesson highlights and key topics from course notes and lesson metadata
-- Simulated emotion detection from uploaded snapshots with engagement analytics for instructor dashboards
-- Optional Hugging Face emotion model support for low-cost/free-tier engagement analysis when `HF_TOKEN` is configured
-- AI analytics dashboards for instructor and admin views with charts for performance bands, engagement trends, popularity, and quiz success
-- Plagiarism detection for submitted answer text with similarity score and matched report
-- Personalized homepage recommendations for logged-in students
-- Works without external API keys by using an on-platform scoring engine built from LMS data
+## Feature Details
 
-### Student
+### Student Experience
 
-- Register and login (username or email supported on login)
-- Browse courses with search/filter/sort
-- Add to wishlist and cart
-- Receive AI-ranked course recommendations
-- Mock payment checkout (UPI/Card/Net Banking/Wallet)
-- Enroll and watch full course video
-- Course quiz attempt and result tracking
-- View AI learning insights and next-step suggestions
-- Certificate generation after quiz pass
-- Review and rating submission
+- Student registration, login by username or email, profile management, and password changes
+- Browse courses by category, level, price, rating, popularity, and search terms
+- Add courses to wishlist or cart before checkout
+- Enroll in free courses immediately or use the mock payment gateway for paid courses
+- Track lesson/course progress and continue active learning paths
+- Attempt quizzes, view scores, and pass/fail status
+- Receive certificates after completing 100% course progress and passing a course quiz
+- Submit reviews and ratings for completed/enrolled courses
+- View AI-ranked recommendations, progress insights, and next-step guidance
 
-### Instructor
+### Instructor Experience
 
-- Instructor dashboard with analytics
-- Course create/edit/delete
-- Upload course thumbnail, background, and full video
-- Student enrollment view by instructor courses
+- Instructor dashboard with course and student activity metrics
+- Create, update, publish, and delete courses
+- Manage sections, lessons, notes, uploaded videos, resources, and quizzes
+- Generate quiz questions from lesson content using the smart quiz generator
+- View enrolled students for instructor-owned courses
+- Review engagement and learning analytics for course activity
 
-### Admin
+### Admin Experience
 
-- Manage users, categories, courses, enrollments, reviews, messages
-- Django admin support (`/admin/` and `/super-admin/`)
-- Platform statistics dashboard
+- Dedicated platform admin dashboard
+- Manage users, categories, courses, enrollments, reviews, FAQs, testimonials, and contact messages
+- Monitor course popularity, enrollment counts, platform statistics, and quiz performance
+- Access Django admin through `/admin/` and alternate admin through `/super-admin/`
 
-## Setup Instructions (Windows)
+## AI-Assisted Features
 
-1. Create and activate virtual environment
+The project includes an explainable AI layer that works without paid API keys by using course content, learner history, quiz results, progress, wishlist/cart activity, and collaborative signals.
+
+- Personalized course recommendations with match percentage and reasons
+- Learner profile builder based on interests, enrollments, progress, quiz scores, wishlist, and cart
+- Course detail AI-fit score for logged-in students
+- Student dashboard insights with learning stage, risk/performance band, and action items
+- Learning path optimizer that recommends next lessons and weak-topic revision
+- LMS-aware chatbot for course search, progress questions, certificates, quizzes, pricing, and FAQs
+- Smart quiz generator that creates MCQs from lesson notes and course content
+- Video summary generator using lesson metadata and notes
+- Assignment plagiarism checker using similarity scoring
+- Engagement snapshot analysis with local fallback and optional Hugging Face/Google Vision providers
+
+## AI/ML Engineering Focus
+
+This project is positioned as an applied AI/ML system rather than only a CRUD web app.
+
+- Built a recommendation engine using content signals, collaborative patterns, learner interests, progress, and quiz performance
+- Designed explainable scoring so every recommendation includes interpretable reasons instead of black-box outputs
+- Implemented learner profiling from behavioral data such as enrollments, wishlist activity, cart activity, completion rate, and assessment outcomes
+- Added performance prediction logic that estimates learner risk bands from progress, consistency, and quiz quality
+- Created NLP-style utilities for keyword extraction, sentence selection, topic summarization, and quiz generation from lesson notes
+- Integrated optional external inference providers for emotion/engagement analysis with graceful fallback to local heuristics
+- Used AI outputs directly in product features such as dashboard insights, course match labels, chatbot replies, and revision guidance
+
+## ML Concepts Demonstrated
+
+- Recommendation systems
+- Explainable ranking
+- Feature engineering from user behavior
+- Rule-based predictive analytics
+- NLP-style text tokenization and summarization
+- Similarity-based plagiarism detection
+- Human engagement/emotion classification
+- Applied AI product integration
+
+## Database Design
+
+Important models include:
+
+- `User`, `StudentProfile`, `InstructorProfile`
+- `Category`, `Course`, `CourseSection`, `Lesson`, `LessonResource`
+- `Quiz`, `Question`, `Option`, `Review`
+- `Enrollment`, `LessonProgress`, `Result`, `Certificate`
+- `Wishlist`, `CartItem`, `MockPaymentTransaction`
+- `EngagementSnapshot`, `AssignmentSubmission`
+- `FAQ`, `ContactMessage`, `Testimonial`
+
+The schema uses foreign keys, unique constraints, model indexes, role checks, and timestamped base models to keep data organized and reliable.
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repository-url>
+cd "E-Learning Management"
+```
+
+### 2. Create and activate a virtual environment
+
+macOS/Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Windows PowerShell:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-2. Install dependencies
+### 3. Install dependencies
 
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
-3. Apply migrations
+### 4. Configure environment variables
 
-```powershell
+```bash
+cp .env.example .env
+```
+
+Update `.env` with a secure `DJANGO_SECRET_KEY` for production use.
+
+### 5. Apply migrations
+
+```bash
 python manage.py migrate
 ```
 
-4. Load demo data
+### 6. Load demo data
 
-```powershell
+```bash
 python manage.py seed_demo_data
 ```
 
-5. Run server
+### 7. Run the development server
 
-```powershell
+```bash
 python manage.py runserver
 ```
 
-Optional Hugging Face setup for emotion detection:
+Open the app at:
+
+- Home: `http://127.0.0.1:8000/`
+- Django Admin: `http://127.0.0.1:8000/admin/`
+- Alternate Admin: `http://127.0.0.1:8000/super-admin/`
+
+## Demo Credentials
+
+| Role | Username | Password |
+| --- | --- | --- |
+| Admin | `platformadmin` | `Admin@123` |
+| Instructor | `anita_shah` | `Pass@123` |
+| Instructor | `rohan_patel` | `Pass@123` |
+| Instructor | `meera_joshi` | `Pass@123` |
+| Student | `aisha` | `12345` |
+| Student | `rahul` | `12345` |
+| Student | `sneha` | `12345` |
+
+Student users can also log in with their seeded email IDs, for example `aisha@gmail.com`.
+
+## Optional AI Provider Setup
+
+The platform works without external API keys. For optional real emotion/engagement analysis, configure one of the supported providers.
+
+Hugging Face:
 
 ```bash
 export HF_TOKEN="your_hugging_face_token"
@@ -101,110 +258,52 @@ export HUGGINGFACE_EMOTION_MODEL="dima806/facial_emotions_image_detection"
 python manage.py runserver
 ```
 
-Provider order is Hugging Face first, then the local simulated fallback.
-The Hugging Face provider uses the current router endpoint: `https://router.huggingface.co/hf-inference/models/...`.
-
-6. Open in browser
-
-- Home: `http://127.0.0.1:8000/`
-- Admin: `http://127.0.0.1:8000/admin/`
-- Alternate admin: `http://127.0.0.1:8000/super-admin/`
-
-## Demo Credentials
-
-### Admin
-
-- Username: `platformadmin`
-- Password: `Admin@123`
-
-### Instructors
-
-- `anita_shah` / `Pass@123`
-- `rohan_patel` / `Pass@123`
-- `meera_joshi` / `Pass@123`
-- `rahul_verma` / `Pass@123`
-- `priya_mehta` / `Pass@123`
-
-### Students
-
-- `aisha` / `12345`
-- `rahul` / `12345`
-- `sneha` / `12345`
-- `arjun` / `12345`
-- `priya` / `12345`
-- `karan` / `12345`
-- `neha` / `12345`
-- `rohan_student` / `12345`
-
-You can also login with student email IDs (example: `aisha@gmail.com`).
-
-## Project Structure
-
-```text
-smart_lms/
-  apps/
-    accounts/
-    core/
-    courses/
-    learning/
-  smart_lms/
-    settings.py
-    urls.py
-  templates/
-  static/
-  media/
-  manage.py
-```
-
-## GitHub Resume Submission
-
-This project is ready to share as a GitHub repository for resume or portfolio use.
-Do not commit local secrets, local database files, virtual environments, generated static files, or uploaded media.
-
-Recommended files to commit:
+Google Vision:
 
 ```bash
-git add api apps smart_lms templates static manage.py requirements.txt README.md .gitignore .env.example
-git commit -m "Prepare Django LMS project for GitHub"
-git push -u origin main
+export GOOGLE_CLOUD_VISION_API_KEY="your_google_vision_api_key"
+python manage.py runserver
 ```
 
-Do not commit:
+If no provider is configured or the provider is unavailable, the app uses the local fallback classifier.
 
-```text
-.env
-db.sqlite3
-.venv/
-.venv_mac/
-media/
-staticfiles/
-.DS_Store
-```
+## Useful Commands
 
-## Notes For Final Submission
-
-- Keep at least 2-3 courses with real media for presentation screenshots.
-- Run with fresh seeded data before viva.
-- Highlight the AI recommendation engine, AI insights dashboard, and AI course match score during project demo.
-- If you edit models in future, run:
-
-```powershell
+```bash
 python manage.py makemigrations
 python manage.py migrate
-```
-
-## Troubleshooting
-
-### Login issue
-
-- Reseed accounts:
-
-```powershell
 python manage.py seed_demo_data
+python manage.py createsuperuser
+python manage.py runserver
 ```
 
-### CSRF issue (403)
+## Certificate Rule
 
-- Hard refresh page (`Ctrl + F5`)
-- Clear site cookies for `127.0.0.1` if needed
-- Reopen login page and submit again
+A certificate is issued only when:
+
+1. The student reaches 100% course progress.
+2. The student passes at least one quiz from that course.
+
+Certificates are generated with unique certificate numbers such as `SEL-2026-XXXXXXXX`.
+
+## Deployment Notes
+
+- `api/index.py` exposes the Django WSGI app for Vercel-style deployments.
+- `STATIC_ROOT` is configured for collected static files, and deployment dependencies are listed in `requirements.txt`.
+- SQLite is used for local development; for production, configure a managed relational database.
+- Set `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS` in production.
+- Do not commit `.env`, `db.sqlite3`, virtual environments, uploaded `media/`, or generated `staticfiles/`.
+
+## Resume Talking Points
+
+- Built an AI-enhanced learning platform that combines recommendation logic, learner analytics, quiz generation, and engagement analysis inside a production-style Django application.
+- Implemented an explainable recommendation engine using learner interests, enrollment history, completion behavior, quiz results, and collaborative signals.
+- Developed NLP-style pipelines for keyword extraction, content summarization, and auto-generation of quiz questions from lesson notes.
+- Designed predictive learner insights using progress, assessment quality, and activity patterns to estimate student performance bands and next-step actions.
+- Added similarity-based plagiarism checks and optional Hugging Face/Google Vision inference for engagement classification.
+- Integrated AI features into user-facing product workflows including course ranking, chatbot assistance, dashboards, revision planning, and certificate readiness tracking.
+- Structured the system with modular Django apps, reusable service layers, and seeded demo data for fast experimentation and portfolio presentation.
+
+## Project Status
+
+This project is ready for GitHub portfolio submission and resume linking. Before sharing publicly, verify that `.env`, `db.sqlite3`, uploaded media, and virtual environment folders are not committed.
