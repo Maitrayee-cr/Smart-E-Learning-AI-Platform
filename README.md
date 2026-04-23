@@ -23,43 +23,43 @@ This project is especially suited for an AI/ML-focused portfolio because it demo
 
 Shows the platform positioning around AI-guided learning, course discovery, and personalized learning support.
 
-![Smart E-Learning home hero](docs/screenshots/home-hero.png)
+<img src="./docs/screenshots/home-hero.png" alt="Smart E-Learning home hero" width="100%">
 
 ### 2. Explainable AI layer
 
 Highlights the core AI product concepts surfaced in the UI: recommendation engine, progress insights, course match scoring, and chatbot assistance.
 
-![AI layer section](docs/screenshots/ai-layer.png)
+<img src="./docs/screenshots/ai-layer.png" alt="AI layer section" width="100%">
 
 ### 3. Advanced AI modules
 
 Demonstrates additional AI-driven features built into the LMS, including video summarization, emotion detection, voice assistant support, analytics, and plagiarism checks.
 
-![Advanced AI features](docs/screenshots/advanced-ai-features.png)
+<img src="./docs/screenshots/advanced-ai-features.png" alt="Advanced AI features" width="100%">
 
 ### 4. Student dashboard with assistant
 
 The dashboard combines learning analytics, profile signals, progress tracking, and an LMS-aware chatbot that responds to student questions.
 
-![Student dashboard and chatbot assistant](docs/screenshots/student-dashboard-chatbot.png)
+<img src="./docs/screenshots/student-dashboard-chatbot.png" alt="Student dashboard and chatbot assistant" width="100%">
 
 ### 5. Course workspace with engagement analysis
 
 Inside an enrolled course, the learner can track progress, unlock certificates, watch course content, and use emotion detection with optional Hugging Face-backed analysis.
 
-![Course page with emotion detection](docs/screenshots/course-emotion-detection.png)
+<img src="./docs/screenshots/course-emotion-detection.png" alt="Course page with emotion detection" width="100%">
 
 ### 6. Learning path + plagiarism detection
 
 Shows predictive next-step guidance, weak-topic revision support, quiz performance, and assignment similarity checking in the course workspace.
 
-![Learning path and plagiarism detection](docs/screenshots/course-plagiarism-learning-path.png)
+<img src="./docs/screenshots/course-plagiarism-learning-path.png" alt="Learning path and plagiarism detection" width="100%">
 
 ### 7. AI video summarizer output
 
 Illustrates the generated lecture highlights, extracted key topics, and lesson summary view presented inside the student experience.
 
-![AI video summarizer output](docs/screenshots/video-summarizer.png)
+<img src="./docs/screenshots/video-summarizer.png" alt="AI video summarizer output" width="100%">
 
 ## Tech Stack
 
@@ -293,16 +293,6 @@ Certificates are generated with unique certificate numbers such as `SEL-2026-XXX
 - SQLite is used for local development; for production, configure a managed relational database.
 - Set `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS` in production.
 - Do not commit `.env`, `db.sqlite3`, virtual environments, uploaded `media/`, or generated `staticfiles/`.
-
-## Resume Talking Points
-
-- Built an AI-enhanced learning platform that combines recommendation logic, learner analytics, quiz generation, and engagement analysis inside a production-style Django application.
-- Implemented an explainable recommendation engine using learner interests, enrollment history, completion behavior, quiz results, and collaborative signals.
-- Developed NLP-style pipelines for keyword extraction, content summarization, and auto-generation of quiz questions from lesson notes.
-- Designed predictive learner insights using progress, assessment quality, and activity patterns to estimate student performance bands and next-step actions.
-- Added similarity-based plagiarism checks and optional Hugging Face/Google Vision inference for engagement classification.
-- Integrated AI features into user-facing product workflows including course ranking, chatbot assistance, dashboards, revision planning, and certificate readiness tracking.
-- Structured the system with modular Django apps, reusable service layers, and seeded demo data for fast experimentation and portfolio presentation.
 
 ## Project Status
 
