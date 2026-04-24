@@ -286,14 +286,3 @@ A certificate is issued only when:
 
 Certificates are generated with unique certificate numbers such as `SEL-2026-XXXXXXXX`.
 
-## Deployment Notes
-
-- `api/index.py` exposes the Django WSGI app for Vercel-style deployments.
-- `STATIC_ROOT` is configured for collected static files, and deployment dependencies are listed in `requirements.txt`.
-- SQLite is used for local development; for production, configure a managed relational database.
-- Set `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS` in production.
-- Do not commit `.env`, `db.sqlite3`, virtual environments, uploaded `media/`, or generated `staticfiles/`.
-
-## Project Status
-
-This project is ready for GitHub portfolio submission and resume linking. Before sharing publicly, verify that `.env`, `db.sqlite3`, uploaded media, and virtual environment folders are not committed.
